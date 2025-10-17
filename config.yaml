@@ -1,0 +1,63 @@
+publish_models: [logistic, rf, xgb]   # three separate predictions; no ensemble
+
+models:
+  logistic:
+    file: model_LogReg_pipe_F2.joblib
+    imputer: null
+    features: [Max_Rainfall_30day, R3d, R7d, R30d]
+  rf:
+    file: model_RF_F2.joblib
+    imputer: preprocess_imputer_RF_F2.joblib
+    features: [Max_Rainfall_30day, Max_Rainfall_3day, R1d, R3d]
+  xgb:
+    file: model_XGB_F2.joblib
+    imputer: preprocess_imputer_XGB_F2.joblib
+    features: [Max_Rainfall_30day, Max_Rainfall_3day, R7d, R30d]
+
+site_features: [R1d, R3d, R7d, R30d, Max_Rainfall_3day, Max_Rainfall_30day, elev_40m, slope_40m, soil_depth]
+site_feature_order: [R1d, R3d, R7d, R30d, Max_Rainfall_3day, Max_Rainfall_30day, slope_40m, elev_40m, soil_depth]
+
+grid:
+  dem_path: "/ABS/PATH/TO/dem_40m.tif"
+  slope_raster_path: null
+  boundary_path: "/ABS/PATH/TO/buncombe_boundary.geojson"
+  projected_crs: null
+  web_crs: "EPSG:4326"
+  soil_flag:
+    vector_path: "/ABS/PATH/TO/soil_depth_flag.geojson"
+    raster_path: null
+    field: "Deep200_Flag"
+  outputs:
+    parquet: "data/static/static_grid.parquet"
+    geojson: "data/static/static_grid.geojson"
+
+paths:
+  models: "models"
+  data_static: "data/static"
+  data_rain: "data/rain"
+  predictions: "predictions"
+  web_root: "www"
+  web_tiles: "www/tiles"
+
+rain_features:
+  filename_pattern: "features_%Y-%m-%d.parquet"
+  date_format: "%Y-%m-%d"
+
+prediction_output:
+  filename_pattern: "pred_%(model)s_%Y-%m-%d"   # e.g., pred_rf_2025-10-01
+  include_csv: true
+  include_geojson: true
+
+tiling:
+  web_crs: "EPSG:4326"
+  minzoom: 8
+  maxzoom: 15
+  resampling: bilinear
+  breaks: [0.2, 0.4, 0.6, 0.8]
+
+threshold:
+  prob_cut: 0.5
+
+about:
+  title: "Buncombe County Real-Time Landslide Risk"
+  note: "Separate predictions per model; probabilities are next 24–72h estimates."

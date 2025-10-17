@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+*.log
+
+# Data & Models (tracked via LFS or ignored)
+data/rain/
+data/static/
+predictions/
+models/*.joblib
+*.parquet
+*.tif
+*.shp
+*.dbf
+*.shx
+*.prj
+*.zip
+
+# IDE
+.idea/
+.DS_Store
