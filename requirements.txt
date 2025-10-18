@@ -1,0 +1,12 @@
+pandas
+geopandas
+shapely
+pyyaml
+scikit-learn
+xgboost
+joblib
+numpy
+fastapi
+uvicorn
+pyarrow
+matplotlib

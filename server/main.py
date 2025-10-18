@@ -1,61 +1,113 @@
-import os, json, joblib
-from typing import List, Optional
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from pydantic import BaseModel, field_validator
-from fastapi.middleware.cors import CORSMiddleware
+#!/usr/bin/env python3
+"""
+FastAPI backend for the Buncombe real-time landslide project.
+Step 1: expose latest GeoJSON and metadata to the front end.
+"""
 
-ARTIFACT_PATH = os.getenv("MODEL_PATH", "artifacts/model.joblib")
-bundle = joblib.load(ARTIFACT_PATH)
-pipe = bundle["model"]
-FEATURES: List[str] = bundle["feature_order"]
+from pathlib import Path
+import json
 
-app = FastAPI(title="Realtime Landslide Predictor", version=bundle["meta"].get("version","0"))
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"]
-)
+# -----------------------------------------------------------
+# Initialize app
+# -----------------------------------------------------------
+app = FastAPI(title="Buncombe Landslide Prediction API")
 
-class PredictRequest(BaseModel):
-    # Keep keys aligned with FEATURES
-    rain_1d: float
-    rain_7d: float
-    slope: float
+# -----------------------------------------------------------
+# Static mount: serve raw GeoJSONs and related outputs
+# -----------------------------------------------------------
+# Folder structure expected:
+# predictions/
+#   ├── latest.geojson
+#   ├── latest.json
+#   └── YYYY-MM-DD/predictions.geojson
+app.mount("/predictions", StaticFiles(directory="predictions"), name="predictions")
 
-    @field_validator("*")
-    @classmethod
-    def finite(cls, v):
-        if v is None: raise ValueError("Missing value")
-        return float(v)
+# (optional) serve the whole www folder if you later add assets (css/js/images)
+app.mount("/www", StaticFiles(directory="www"), name="www")
 
-class PredictResponse(BaseModel):
-    prob: float
-    label: int
-
-def _vectorize(d: dict):
-    return [[d[k] for k in FEATURES]]
-
-@app.get("/health")
-def health():
-    return {"status":"ok", "features":FEATURES}
-
-@app.post("/predict", response_model=PredictResponse)
-def predict(req: PredictRequest):
-    X = _vectorize(req.model_dump())
-    proba = float(pipe.predict_proba(X)[0][1])
-    label = int(proba >= 0.5)
-    return {"prob": proba, "label": label}
-
-@app.websocket("/ws")
-async def ws_endpoint(ws: WebSocket):
-    await ws.accept()
+# -----------------------------------------------------------
+# Helper: load JSON safely
+# -----------------------------------------------------------
+def _read_json(path: Path):
+    if not path.exists():
+        return None
     try:
-        while True:
-            msg = await ws.receive_text()
-            data = json.loads(msg)
-            X = _vectorize({k: float(data[k]) for k in FEATURES})
-            proba = float(pipe.predict_proba(X)[0][1])
-            label = int(proba >= 0.5)
-            await ws.send_text(json.dumps({"prob": proba, "label": label}))
-    except WebSocketDisconnect:
-        return
+        with open(path, "r") as f:
+            return json.load(f)
+    except Exception as e:
+        return {"error": f"Failed to read {path.name}: {e}"}
+
+# -----------------------------------------------------------
+# Root route: serve the front-end page
+# -----------------------------------------------------------
+@app.get("/", response_class=HTMLResponse)
+def serve_index():
+    index_path = Path("www/index.html")
+    if not index_path.exists():
+        # fallback placeholder if index.html not present
+        return HTMLResponse(
+            """
+            <html><body style="font-family:sans-serif">
+              <h2>🚧 Landslide Nowcast Backend</h2>
+              <p>Place your front-end at <code>www/index.html</code>.</p>
+              <ul>
+                <li><a href="/predictions/latest.geojson">/predictions/latest.geojson</a></li>
+                <li><a href="/api/latest">/api/latest</a></li>
+              </ul>
+            </body></html>
+            """,
+            status_code=200,
+        )
+    return index_path.read_text(encoding="utf-8")
+
+# -----------------------------------------------------------
+# API: metadata for the latest prediction
+# -----------------------------------------------------------
+@app.get("/api/latest")
+def get_latest_metadata():
+    """Return metadata describing the most recent prediction run."""
+    meta_path = Path("predictions/latest.json")
+    meta = _read_json(meta_path)
+    if meta is None:
+        return JSONResponse(
+            {"error": "latest.json not found", "path": str(meta_path)}, status_code=404
+        )
+    return JSONResponse(meta)
+
+# -----------------------------------------------------------
+# API: return the latest GeoJSON file directly
+# -----------------------------------------------------------
+@app.get("/api/latest_geojson")
+def get_latest_geojson():
+    """Serve the latest GeoJSON (for easy fetch from front-end JS)."""
+    geo_path = Path("predictions/latest.geojson")
+    if not geo_path.exists():
+        return JSONResponse(
+            {"error": "latest.geojson not found", "path": str(geo_path)}, status_code=404
+        )
+    return FileResponse(geo_path, media_type="application/geo+json")
+
+# -----------------------------------------------------------
+# Health check / status endpoint
+# -----------------------------------------------------------
+@app.get("/api/status")
+def status():
+    """Simple heartbeat endpoint."""
+    latest = Path("predictions/latest.json")
+    return {
+        "service": "buncombe-nowcast",
+        "status": "ok" if latest.exists() else "no-latest",
+        "latest_exists": latest.exists(),
+        "latest_path": str(latest),
+    }
+
+# -----------------------------------------------------------
+# Run (only if executed directly)
+# -----------------------------------------------------------
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("server.main:app", host="0.0.0.0", port=8000, reload=True)

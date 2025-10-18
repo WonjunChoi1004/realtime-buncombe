@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Buncombe Landslide Risk — Latest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    #map { height: 100vh; width: 100vw; }
+    .topbar {
+      position: absolute; z-index: 900; top: 10px; left: 50%;
+      transform: translateX(-50%); background: rgba(255,255,255,0.92);
+      padding: 8px 12px; border-radius: 8px; font: 14px/1.25 system-ui, sans-serif;
+      box-shadow: 0 1px 4px rgba(0,0,0,.15);
+    }
+    .panel {
+      position: absolute; z-index: 900; bottom: 16px; left: 12px;
+      background: rgba(255,255,255,0.92); padding: 8px 10px; border-radius: 8px;
+      font: 12px/1.25 system-ui, sans-serif; box-shadow: 0 1px 4px rgba(0,0,0,.15);
+    }
+    .legend { margin-top: 8px; }
+    .swatch { width: 18px; height: 10px; display: inline-block; margin-right: 6px; vertical-align: -1px; }
+    .slider { width: 220px; }
+    .row { margin: 6px 0; }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<div class="topbar" id="topbar">Loading…</div>
+<div class="panel" id="panel">
+  <div class="row"><b>Threshold</b> p ≥ <span id="thv">0.00</span></div>
+  <input id="th" class="slider" type="range" min="0" max="1" step="0.01" value="0" />
+  <div class="legend" id="legend"></div>
+</div>
+
+<script>
+(async function () {
+  const top = document.getElementById('topbar');
+  const th = document.getElementById('th');
+  const thv = document.getElementById('thv');
+  const legendDiv = document.getElementById('legend');
+
+  function setTop(msg){ top.textContent = msg; }
+
+  // Map (canvas renderer for perf)
+  let map;
+  try {
+    map = L.map('map', { preferCanvas: true }).setView([35.6, -82.5], 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+  } catch (e) {
+    console.error('Leaflet init error:', e);
+    setTop('Error: could not initialize map.');
+    return;
+  }
+
+  async function getJSON(url) {
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) throw new Error(`${url} → HTTP ${r.status}`);
+    return await r.json();
+  }
+
+  // Load meta + data
+  let meta, probCol = 'p_logistic';
+  let features = [];
+  try {
+    meta = await getJSON('/api/latest');
+    probCol = meta.prob_col || 'p_logistic';
+    const date = meta.target_date || 'n/a';
+    const model = meta.model || 'n/a';
+    const rows = meta.rows ?? 'n/a';
+    setTop(`Latest: ${date} · model=${model} · prob_col=${probCol} · rows=${rows}`);
+  } catch (e) {
+    console.error('Meta error:', e);
+    setTop('Latest info unavailable');
+  }
+
+  try {
+    const geo = await getJSON('/predictions/latest.geojson');
+    features = (geo.features || []).filter(f => f && f.properties);
+  } catch (e) {
+    console.error('GeoJSON load error:', e);
+    setTop('Error loading latest.geojson');
+    return;
+  }
+
+  // Compute data domain
+  const vals = features.map(f => Number(f.properties[probCol])).filter(Number.isFinite);
+  const dataMin = Math.min(...vals);
+  const dataMax = Math.max(...vals);
+  const vMin = Number.isFinite(dataMin) ? dataMin : 0;
+  const vMax = Number.isFinite(dataMax) ? dataMax : 1;
+  th.min = vMin.toFixed(2);
+  th.max = vMax.toFixed(2);
+  if (vMax - vMin > 0.2) th.value = (vMin + 0.1*(vMax - vMin)).toFixed(2); // modest default
+  thv.textContent = Number(th.value).toFixed(2);
+
+  // Color scale
+  const stops = [
+    [0.2, 0.4, 0.8],
+    [0.1, 0.7, 0.7],
+    [0.3, 0.8, 0.4],
+    [0.9, 0.9, 0.2],
+    [0.98, 0.6, 0.2],
+    [0.8, 0.1, 0.1],
+  ];
+  function lerp(a,b,t){ return a + (b-a)*t; }
+  function getColor(p) {
+    if (!Number.isFinite(p)) return '#999';
+    const t = (p - vMin) / Math.max(1e-9, (vMax - vMin));
+    const x = Math.max(0, Math.min(1, t)) * (stops.length - 1);
+    const i = Math.floor(x), f = x - i;
+    const c0 = stops[i|0], c1 = stops[Math.min(i+1, stops.length-1)];
+    const r = Math.round(lerp(c0[0], c1[0], f)*255);
+    const g = Math.round(lerp(c0[1], c1[1], f)*255);
+    const b = Math.round(lerp(c0[2], c1[2], f)*255);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  // Legend
+  function renderLegend() {
+    const n = 6;
+    let bins = [];
+    for (let i=0;i<n;i++){
+      const a = vMin + (i/(n-1))*(vMax - vMin);
+      bins.push(a);
+    }
+    let html = `<b>${probCol}</b> (${vMin.toFixed(2)}–${vMax.toFixed(2)})<br>`;
+    for (let i=0;i<bins.length-1;i++){
+      const mid = (bins[i] + bins[i+1]) / 2;
+      html += `<span class="swatch" style="background:${getColor(mid)}"></span>${bins[i].toFixed(2)}–${bins[i+1].toFixed(2)}<br>`;
+    }
+    legendDiv.innerHTML = html;
+  }
+  renderLegend();
+
+  // Build popup safely (only show keys that exist)
+  const rainKeys = ['R1d','R3d','R7d','R30d','Max_Rainfall_3day','Max_Rainfall_30day'];
+  function propsPopup(p, probKey) {
+    const pv = Number(p[probKey]);
+    let s = `${probKey}: ${Number.isFinite(pv) ? pv.toFixed(3) : 'n/a'}`;
+    for (const k of rainKeys) if (k in p) s += `<br>${k}: ${Number(p[k] ?? 0).toFixed(1)}`;
+    if ('row' in p && 'col' in p) s += `<br>row: ${p.row} · col: ${p.col}`;
+    return s;
+  }
+
+  // Draw layer with threshold
+  let layer;
+  function draw(threshold) {
+    if (layer) map.removeLayer(layer);
+    layer = L.geoJSON({
+      type: 'FeatureCollection',
+      features: features.filter(f => Number(f.properties[probCol]) >= threshold)
+    }, {
+      pointToLayer: (f, latlng) => {
+        const p = Number(f.properties[probCol]);
+        return L.circleMarker(latlng, {
+          renderer: map.getRenderer(map), radius: 3.2,
+          fillColor: getColor(p), color: '#000', weight: 0.2,
+          opacity: 0.9, fillOpacity: 0.85
+        }).bindPopup(propsPopup(f.properties, probCol));
+      }
+    }).addTo(map);
+
+    try {
+      const b = layer.getBounds();
+      if (b.isValid()) map.fitBounds(b.pad(0.05), { animate: false });
+    } catch(_) {}
+  }
+
+  draw(Number(th.value));
+
+  // Slider
+  let tId = null;
+  th.addEventListener('input', () => {
+    thv.textContent = Number(th.value).toFixed(2);
+    clearTimeout(tId);
+    tId = setTimeout(() => draw(Number(th.value)), 80);
+  });
+})();
+</script>
+</body>
+</html>

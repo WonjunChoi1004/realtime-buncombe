@@ -1,25 +1,19 @@
-# Python
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-.env
+.venv/
 venv/
-*.log
+.idea/
+.DS_Store
 
-# Data & Models (tracked via LFS or ignored)
 data/rain/
-data/static/
 predictions/
-models/*.joblib
+models/
+
 *.parquet
+*.joblib
 *.tif
 *.shp
 *.dbf
 *.shx
 *.prj
-*.zip
-
-# IDE
-.idea/
-.DS_Store
+*.aux.xml
