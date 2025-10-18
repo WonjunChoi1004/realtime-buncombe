@@ -1,0 +1,18 @@
+{
+  "target_date": "2025-10-17",
+  "model": "logistic",
+  "prob_col": "p_logistic",
+  "rows": 2452,
+  "source_parquet": "predictions_2025-10-17.parquet",
+  "fields": [
+    "row",
+    "col",
+    "p_logistic",
+    "R1d",
+    "R3d",
+    "R7d",
+    "R30d",
+    "Max_Rainfall_3day",
+    "Max_Rainfall_30day"
+  ]
+}
