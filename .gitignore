@@ -1,19 +1,4 @@
-__pycache__/
-*.pyc
-.venv/
-venv/
-.idea/
-.DS_Store
-
 data/rain/
-predictions/
-models/
 
-*.parquet
-*.joblib
 *.tif
-*.shp
-*.dbf
-*.shx
-*.prj
-*.aux.xml
+
