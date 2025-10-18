@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <title>Buncombe Landslide Risk — Latest</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Near–real-time landslide risk map for Buncombe County, NC. Fuses daily rainfall windows with terrain and soils to show grid cells exceeding a chosen probability threshold." />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <style>
@@ -13,8 +14,9 @@
       position: absolute; z-index: 900; top: 10px; left: 50%;
       transform: translateX(-50%); background: rgba(255,255,255,0.92);
       padding: 8px 12px; border-radius: 8px; font: 14px/1.25 system-ui, sans-serif;
-      box-shadow: 0 1px 4px rgba(0,0,0,.15);
+      box-shadow: 0 1px 4px rgba(0,0,0,.15); white-space: nowrap;
     }
+    .subtitle { color:#444; margin-left:8px; font-weight:500; }
     .panel {
       position: absolute; z-index: 900; bottom: 16px; left: 12px;
       background: rgba(255,255,255,0.92); padding: 8px 10px; border-radius: 8px;
@@ -24,11 +26,54 @@
     .swatch { width: 18px; height: 10px; display: inline-block; margin-right: 6px; vertical-align: -1px; }
     .slider { width: 220px; }
     .row { margin: 6px 0; }
+
+    /* About button + overlay */
+    .about-btn {
+      position: absolute; z-index: 910; top: 10px; right: 12px;
+      background:#fff; border:1px solid #ccc; border-radius:8px; padding:6px 10px;
+      font: 13px/1 system-ui, sans-serif; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.12);
+    }
+    .about-overlay {
+      position: absolute; z-index: 905; top: 56px; right: 12px; max-width: 360px;
+      background: rgba(255,255,255,0.98); border:1px solid #ddd; border-radius:12px;
+      padding: 12px 14px; box-shadow: 0 6px 24px rgba(0,0,0,.18); display: none;
+      font: 13px/1.35 system-ui, sans-serif;
+    }
+    .about-overlay h3 { margin:0 0 6px 0; font-size:14px; }
+    .about-overlay p { margin:6px 0; }
+    .about-row { color:#333; }
+    .muted { color:#666; }
+    .linklike { color:#0b6; text-decoration:none; }
+    .close-x { float:right; cursor:pointer; font-weight:700; padding:2px 6px; border-radius:6px; }
+    .close-x:hover { background:#eee; }
   </style>
 </head>
 <body>
 <div id="map"></div>
-<div class="topbar" id="topbar">Loading…</div>
+
+<button id="aboutBtn" class="about-btn" aria-haspopup="dialog" aria-controls="aboutBox">About</button>
+<div id="aboutBox" class="about-overlay" role="dialog" aria-modal="false" aria-labelledby="aboutTitle">
+  <div><span id="aboutClose" class="close-x" aria-label="Close">×</span></div>
+  <h3 id="aboutTitle">About this map</h3>
+  <p class="about-row">
+    This site shows a <b>near–real-time landslide risk</b> layer for <b>Buncombe County, NC</b>.
+    It combines <b>daily rainfall windows</b> (e.g., 1–30&nbsp;day sums and 3/30-day maxima)
+    with <b>terrain</b> (elevation, slope) and <b>soil depth</b> to estimate the probability that a grid cell is susceptible to rainfall-triggered landslides today.
+  </p>
+  <p class="about-row">
+    Use the <b>Threshold</b> slider to reveal only grid cells with predicted probability
+    <em>p</em> above your chosen cutoff. The legend reflects the current probability scale (<span class="muted">darker = higher</span>).
+  </p>
+  <p class="about-row muted" id="aboutMeta">Latest run: — · model: — · prob: — · rows: —</p>
+  <p class="about-row muted">
+    Data endpoints: <code>/api/latest</code> (metadata) and <code>/predictions/latest.geojson</code> (tiles/grid).
+  </p>
+</div>
+
+<div class="topbar" id="topbar">
+  Loading… <span class="subtitle" id="subtitle"></span>
+</div>
+
 <div class="panel" id="panel">
   <div class="row"><b>Threshold</b> p ≥ <span id="thv">0.00</span></div>
   <input id="th" class="slider" type="range" min="0" max="1" step="0.01" value="0" />
@@ -38,13 +83,28 @@
 <script>
 (async function () {
   const top = document.getElementById('topbar');
+  const subtitle = document.getElementById('subtitle');
   const th = document.getElementById('th');
   const thv = document.getElementById('thv');
   const legendDiv = document.getElementById('legend');
 
-  function setTop(msg){ top.textContent = msg; }
+  const aboutBtn = document.getElementById('aboutBtn');
+  const aboutBox = document.getElementById('aboutBox');
+  const aboutClose = document.getElementById('aboutClose');
+  const aboutMeta = document.getElementById('aboutMeta');
 
-  // Map (canvas renderer for perf)
+  function setTop(msg){ top.firstChild.nodeValue = msg + ' '; }
+
+  // About toggle
+  function showAbout(show){
+    aboutBox.style.display = show ? 'block' : 'none';
+    aboutBtn.setAttribute('aria-expanded', show ? 'true' : 'false');
+  }
+  aboutBtn.addEventListener('click', () => showAbout(aboutBox.style.display !== 'block'));
+  aboutClose.addEventListener('click', () => showAbout(false));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') showAbout(false); });
+
+  // Map
   let map;
   try {
     map = L.map('map', { preferCanvas: true }).setView([35.6, -82.5], 10);
@@ -72,10 +132,14 @@
     const date = meta.target_date || 'n/a';
     const model = meta.model || 'n/a';
     const rows = meta.rows ?? 'n/a';
-    setTop(`Latest: ${date} · model=${model} · prob_col=${probCol} · rows=${rows}`);
+
+    setTop(`Latest: ${date}`);
+    subtitle.textContent = `model=${model} · prob_col=${probCol} · rows=${rows}`;
+    aboutMeta.textContent = `Latest run: ${date} · model: ${model} · prob: ${probCol} · rows: ${rows}`;
   } catch (e) {
     console.error('Meta error:', e);
     setTop('Latest info unavailable');
+    subtitle.textContent = '';
   }
 
   try {
@@ -87,7 +151,7 @@
     return;
   }
 
-  // Compute data domain
+  // Domain
   const vals = features.map(f => Number(f.properties[probCol])).filter(Number.isFinite);
   const dataMin = Math.min(...vals);
   const dataMax = Math.max(...vals);
@@ -95,7 +159,7 @@
   const vMax = Number.isFinite(dataMax) ? dataMax : 1;
   th.min = vMin.toFixed(2);
   th.max = vMax.toFixed(2);
-  if (vMax - vMin > 0.2) th.value = (vMin + 0.1*(vMax - vMin)).toFixed(2); // modest default
+  if (vMax - vMin > 0.2) th.value = (vMin + 0.1*(vMax - vMin)).toFixed(2);
   thv.textContent = Number(th.value).toFixed(2);
 
   // Color scale
@@ -137,7 +201,7 @@
   }
   renderLegend();
 
-  // Build popup safely (only show keys that exist)
+  // Popup
   const rainKeys = ['R1d','R3d','R7d','R30d','Max_Rainfall_3day','Max_Rainfall_30day'];
   function propsPopup(p, probKey) {
     const pv = Number(p[probKey]);
@@ -147,7 +211,7 @@
     return s;
   }
 
-  // Draw layer with threshold
+  // Layer + threshold
   let layer;
   function draw(threshold) {
     if (layer) map.removeLayer(layer);
