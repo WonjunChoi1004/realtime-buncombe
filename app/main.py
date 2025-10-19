@@ -1,57 +1,47 @@
-#!/usr/bin/env python3
-import subprocess, sys, os, logging
-from datetime import datetime
+import os
 from pathlib import Path
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-APP_DIR = REPO_ROOT / "app"
-PYTHON = os.environ.get("RB_PYTHON", sys.executable)  # set in cron if needed
-GIT_REMOTE = os.environ.get("RB_GIT_REMOTE", "origin")
-GIT_BRANCH = os.environ.get("RB_GIT_BRANCH", "main")
+BASE = Path(__file__).resolve().parent.parent  # repo root
+WWW_DIR = BASE / "www"
+PRED_DIR = BASE / "predictions"
+META_PATH = PRED_DIR / "latest.json"  # update daily along with latest.geojson
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)],
-)
-log = logging.getLogger("runner")
+app = FastAPI(title="Landslide Nowcast Backend")
 
-def run(cmd, cwd=None):
-    p = subprocess.run(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    if p.stdout: log.info(p.stdout.rstrip())
-    if p.returncode != 0:
-        raise SystemExit(f"Command failed ({p.returncode}): {' '.join(cmd)}")
+@app.get("/api/latest")
+def latest():
+    if not META_PATH.exists():
+        raise HTTPException(503, detail="latest.json missing")
+    try:
+        import json
+        with META_PATH.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        raise HTTPException(500, detail=f"failed to read latest.json: {e}")
+    return JSONResponse(data, headers={"Cache-Control": "no-store"})
 
-def git_has_changes():
-    p = subprocess.run(["git", "status", "--porcelain"], cwd=REPO_ROOT, stdout=subprocess.PIPE, text=True)
-    return p.stdout.strip() != ""
+# Static mounts
+app.mount("/predictions", StaticFiles(directory=PRED_DIR), name="predictions")
+app.mount("/", StaticFiles(directory=WWW_DIR, html=True), name="www")
 
-def git_commit_and_push():
-    if not git_has_changes():
-        log.info("No changes to commit.")
-        return
-    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    run(["git", "add", "-A"], cwd=REPO_ROOT)
-    run(["git", "commit", "-m", f"Auto-update: rainfall & predictions @ {ts}"], cwd=REPO_ROOT)
-    # simple push with 2 retries
-    for i in range(3):
-        try:
-            run(["git", "push", GIT_REMOTE, GIT_BRANCH], cwd=REPO_ROOT)
-            log.info("Push succeeded.")
-            return
-        except SystemExit as e:
-            log.warning(f"Push failed (attempt {i+1}/3): {e}")
-    raise SystemExit("Push failed after 3 attempts.")
+# Optional root helper page (served only if index.html missing)
+@app.get("/health", response_class=JSONResponse)
+def health():
+    geo = (PRED_DIR / "latest.geojson").exists()
+    meta = META_PATH.exists()
+    return JSONResponse({"ok": True, "geojson": geo, "meta": meta}, headers={"Cache-Control": "no-store"})
 
-def main():
-    log.info("Running download_prism_daily.py")
-    run([PYTHON, str(APP_DIR / "download_prism_daily.py")], cwd=APP_DIR)
-
-    log.info("Running predict_daily_triple.py")
-    run([PYTHON, str(APP_DIR / "predict_daily_triple.py")], cwd=APP_DIR)
-
-    log.info("Committing and pushing changes")
-    git_commit_and_push()
-
-if __name__ == "__main__":
-    main()
+# If you want a simple landing text when index.html isn't present:
+@app.get("/_info")
+def info():
+    return HTMLResponse(
+        "<h1>🦺 Landslide Nowcast Backend</h1>"
+        "<p>Front-end at <code>www/index.html</code>.</p>"
+        "<ul>"
+        "<li><a href='/predictions/latest.geojson'>/predictions/latest.geojson</a></li>"
+        "<li><a href='/api/latest'>/api/latest</a></li>"
+        "</ul>"
+    )
