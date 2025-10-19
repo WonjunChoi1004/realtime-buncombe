@@ -50,45 +50,27 @@
     .row-inline { display:flex; gap:8px; align-items:center; }
     .select { font: 13px/1.2 system-ui, sans-serif; padding:4px 8px; }
 
-    /* Welcome screen with branding */
+    /* Welcome */
     #welcomeOverlay {
-      position: fixed; inset: 0; z-index: 1200;
-      display: flex; align-items: center; justify-content: center;
-      transition: opacity .8s ease, visibility .8s ease;
-      background: rgba(0,0,0,0.25);
+      position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center;
+      transition: opacity .8s ease, visibility .8s ease; background: rgba(0,0,0,0.25);
     }
     #welcomeOverlay::before {
-      content: "";
-      position: absolute; inset: 0;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.35)),
-        url('assets/welcome-bg.jpg') center/cover no-repeat;
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.35)), url('assets/welcome-bg.jpg') center/cover no-repeat;
       filter: saturate(1.05) contrast(1.05);
     }
     #welcomeOverlay.hidden { opacity: 0; visibility: hidden; }
     .welcome-box {
-      position: relative;
-      text-align: center;
-      background: rgba(255,255,255,0.96);
-      border-radius: 16px;
-      padding: 28px 38px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      color: #0b2239;
-      max-width: 560px;
-      backdrop-filter: blur(2px);
+      position: relative; text-align: center; background: rgba(255,255,255,0.96);
+      border-radius: 16px; padding: 28px 38px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      color: #0b2239; max-width: 560px; backdrop-filter: blur(2px);
     }
-    .welcome-box .logo {
-      width: 84px; height: 84px; object-fit: contain;
-      display:block; margin: 0 auto 12px; border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.15);
-    }
+    .welcome-box .logo { width: 84px; height: 84px; object-fit: contain; display:block; margin: 0 auto 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
     .welcome-box h1 { margin: 0 0 10px; font-size: 1.9rem; color: #0b6; }
     .welcome-box p { margin: 6px 0; }
     .welcome-box .desc { color: #233; font-size: .98rem; margin: 12px 0 20px; line-height: 1.5; }
-    #welcomeOverlay button {
-      font-size: 1rem; padding: 10px 20px; border: none; border-radius: 8px;
-      background: #0b6; color: #fff; cursor: pointer; transition: background .2s ease;
-    }
+    #welcomeOverlay button { font-size: 1rem; padding: 10px 20px; border: none; border-radius: 8px; background: #0b6; color: #fff; cursor: pointer; transition: background .2s ease; }
     #welcomeOverlay button:hover { background: #099d60; }
 
     /* Scrollable About */
@@ -105,10 +87,7 @@
     <h1>Asheville Landslide Project</h1>
     <p><b>Real-Time Prediction of Rainfall-Triggered Landslides</b><br><span class="muted">Buncombe County, North Carolina</span></p>
     <p class="desc">This platform combines rainfall, terrain, and soil data to predict slope failure probability using machine learning. Explore live and historical predictions through interactive tools.</p>
-    <!-- Added attribution -->
-    <p style="margin-top:16px; font-size:0.9rem; color:#333;">
-      <b>Developed by Wonjun Choi</b><br>Grade 12, Asheville School
-    </p>
+    <p style="margin-top:16px; font-size:0.9rem; color:#333;"><b>Developed by Wonjun Choi</b><br>Grade 12, Asheville School</p>
     <button id="continueBtn">Continue</button>
   </div>
 </div>
@@ -135,7 +114,6 @@
     This project was developed by <b>Wonjun Choi</b>, Grade 12 student at <b>Asheville School</b>,
     as part of a research initiative to apply data science and geospatial modeling for hazard prediction in Western North Carolina.
   </p>
-
   <p>
     This map is part of the <b>Asheville Landslide Project</b> — a real-time prediction system designed to
     assess <b>rainfall-triggered landslide risk</b> across <b>Buncombe County, North Carolina</b>.
@@ -161,7 +139,6 @@
     <li><b>Historical runs</b> via the “Runs” picker, backed by <code>/predictions/index.json</code>.</li>
     <li>Per-run artifacts under <code>/predictions/historicData/YYYY/MM/</code> (GeoJSON, Parquet, meta).</li>
   </ul>
-
   <p class="muted" id="aboutMeta">Latest run: — · model: Random Forest · prob: p_rf · rows: —</p>
   <p class="muted">Data endpoints: <code>/predictions/latest.json</code>, <code>/predictions/latest.geojson</code>, <code>/predictions/index.json</code></p>
 </div>
@@ -196,6 +173,11 @@
   const welcome = document.getElementById('welcomeOverlay');
   const continueBtn = document.getElementById('continueBtn');
 
+  // Fixed probability domain
+  const USE_FIXED_DOMAIN = true;
+  const DOMAIN_MIN = 0.40;
+  const DOMAIN_MAX = 1.00;
+
   let map, layer, features = [], probCol = 'p_rf';
   let manifest = { runs: [], latest: null };
 
@@ -203,10 +185,8 @@
   function show(el, show){ el.style.display = show ? 'block' : 'none'; }
   function toggle(el){ show(el, el.style.display !== 'block'); }
 
-  // Welcome dismiss
   continueBtn.addEventListener('click', () => { welcome.classList.add('hidden'); });
 
-  // Buttons
   summaryBtn.addEventListener('click', () => { window.open('project-summary.html', '_blank'); });
   aboutBtn.addEventListener('click', () => toggle(aboutBox));
   aboutClose.addEventListener('click', () => show(aboutBox, false));
@@ -219,7 +199,7 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
   } catch (e) { console.error('Leaflet init error:', e); setTop('Error: could not initialize map.'); return; }
 
-  // Stop map from hijacking UI
+  // Keep UI interactive over the map
   const panelEl = document.getElementById('panel');
   L.DomEvent.disableClickPropagation(panelEl);
   L.DomEvent.disableScrollPropagation(panelEl);
@@ -262,46 +242,129 @@
     const b=Math.round(lerp(c0[2],c1[2],f)*255);
     return`rgb(${r},${g},${b})`;
   }}
-  function renderLegend(vMin,vMax){const n=6,bins=[];for(let i=0;i<n;i++)bins.push(vMin+(i/(n-1))*(vMax-vMin));
+  function renderLegend(vMin,vMax){
+    const n=6,bins=[];for(let i=0;i<n;i++)bins.push(vMin+(i/(n-1))*(vMax-vMin));
     const getColor=colorScale(vMin,vMax);
     let html=`<b>${probCol}</b> (${vMin.toFixed(2)}–${vMax.toFixed(2)})<br>`;
-    for(let i=0;i<bins.length-1;i++){const mid=(bins[i]+bins[i+1])/2;
-      html+=`<span class="swatch" style="background:${getColor(mid)}"></span>${bins[i].toFixed(2)}–${bins[i+1].toFixed(2)}<br>`;}
-    legendDiv.innerHTML=html;}
+    for(let i=0;i<bins.length-1;i++){
+      const mid=(bins[i]+bins[i+1])/2;
+      html+=`<span class="swatch" style="background:${getColor(mid)}"></span>${bins[i].toFixed(2)}–${bins[i+1].toFixed(2)}<br>`;
+    }
+    legendDiv.innerHTML=html;
+  }
   const rainKeys=['R1d','R3d','R7d','R30d','Max_Rainfall_3day','Max_Rainfall_30day'];
-  function propsPopup(p,probKey){const pv=Number(p[probKey]);
+  function propsPopup(p,probKey){
+    const pv=Number(p[probKey]);
     let s=`${probKey}: ${Number.isFinite(pv)?pv.toFixed(3):'n/a'}`;
     for(const k of rainKeys)if(k in p)s+=`<br>${k}: ${Number(p[k]??0).toFixed(1)}`;
-    if('row'in p&&'col'in p)s+=`<br>row: ${p.row} · col: ${p.col}`;return s;}
-  function drawLayer(th,vMin,vMax){if(layer)map.removeLayer(layer);const getColor=colorScale(vMin,vMax);
-    layer=L.geoJSON({type:'FeatureCollection',features:features.filter(f=>Number(f.properties[probCol])>=th)},{
-      pointToLayer:(f,latlng)=>{const p=Number(f.properties[probCol]);
-        return L.circleMarker(latlng,{renderer:map.getRenderer(map),radius:3.2,fillColor:getColor(p),color:'#000',weight:0.2,opacity:0.9,fillOpacity:0.85})
-        .bindPopup(propsPopup(f.properties,probCol));}}).addTo(map);
-    try{const b=layer.getBounds();if(b.isValid())map.fitBounds(b.pad(0.05),{animate:false});}catch(_){}}
-  function recomputeAndRedraw(){const vals=features.map(f=>Number(f.properties[probCol])).filter(Number.isFinite);
-    let vMin=Math.min(...vals),vMax=Math.max(...vals);
-    if(!Number.isFinite(vMin)||!Number.isFinite(vMax)||vMax<=vMin){vMin=0;vMax=1;}
-    th.min=vMin.toFixed(2);th.max=vMax.toFixed(2);
-    const cur=Number(th.value);if(!Number.isFinite(cur)||cur<vMin||cur>vMax){th.value=(vMin+0.1*(vMax-vMin)).toFixed(2);}
-    thv.textContent=Number(th.value).toFixed(2);renderLegend(vMin,vMax);drawLayer(Number(th.value),vMin,vMax);}
-  let debounce=null;th.addEventListener('input',()=>{thv.textContent=Number(th.value).toFixed(2);clearTimeout(debounce);debounce=setTimeout(()=>recomputeAndRedraw(),80);});
+    if('row'in p&&'col'in p)s+=`<br>row: ${p.row} · col: ${p.col}`;
+    return s;
+  }
+  function drawLayer(threshold,vMin,vMax){
+    if(layer)map.removeLayer(layer);
+    const getColor=colorScale(vMin,vMax);
+    layer=L.geoJSON(
+      {type:'FeatureCollection',features:features.filter(f=>Number(f.properties[probCol])>=threshold)},
+      {
+        pointToLayer:(f,latlng)=>{
+          const p=Number(f.properties[probCol]);
+          return L.circleMarker(latlng,{
+            renderer:map.getRenderer(map),radius:3.2,fillColor:getColor(p),
+            color:'#000',weight:0.2,opacity:0.9,fillOpacity:0.85
+          }).bindPopup(propsPopup(f.properties,probCol));
+        }
+      }
+    ).addTo(map);
+    try{
+      const b=layer.getBounds();
+      if(b.isValid())map.fitBounds(b.pad(0.05),{animate:false});
+    }catch(_){}
+  }
 
-  async function loadLatest(){try{const meta=await getJSON('/predictions/latest.json');probCol=meta.prob_col||'p_rf';setSubtitle(meta);}
-    catch(e){console.warn('latest.json missing');}const geo=await getJSON('/predictions/latest.geojson');
-    features=(geo.features||[]).filter(f=>f&&f.properties);recomputeAndRedraw();
-    runPaths.innerHTML=`<span class="muted">GeoJSON:</span> <code class="mono">/predictions/latest.geojson</code>`;}
-  async function loadByDate(dateStr){const rec=(manifest.runs||[]).find(r=>r.date===dateStr);
-    if(!rec)throw new Error(`Run not found: ${dateStr}`);const meta=await getJSON('/'+rec.meta);probCol=(meta.prob_col||'p_rf');
-    setSubtitle(meta);const geo=await getJSON('/'+rec.geojson);features=(geo.features||[]).filter(f=>f&&f.properties);
-    recomputeAndRedraw();runPaths.innerHTML=`<span class="muted">GeoJSON:</span> <code class="mono">/${rec.geojson}</code><br><span class="muted">Parquet:</span> <code class="mono">/${rec.parquet}</code>`;}
-  function populateRuns(){runSelect.innerHTML='';const optL=document.createElement('option');
-    optL.value='__latest__';optL.textContent='Latest';runSelect.appendChild(optL);
-    for(const r of(manifest.runs||[])){const o=document.createElement('option');o.value=r.date;o.textContent=r.date;runSelect.appendChild(o);}
-    runCount.textContent=`${(manifest.runs||[]).length} archived`;runSelect.value='__latest__';}
-  runSelect.addEventListener('change',async e=>{const v=e.target.value;try{setTop('Loading…');if(v==='__latest__')await loadLatest();else await loadByDate(v);}catch(err){console.error(err);setTop('Load error');}});
-  try{manifest=await getJSON('/predictions/index.json');}catch(e){console.warn('index.json missing');manifest={runs:[],latest:null};}
-  populateRuns();await loadLatest();
+  function recomputeAndRedraw(){
+    // Data-driven min/max kept for fallback; fixed domain used by default
+    const vals=features.map(f=>Number(f.properties[probCol])).filter(Number.isFinite);
+    let dataMin=Math.min(...vals), dataMax=Math.max(...vals);
+    if(!Number.isFinite(dataMin)||!Number.isFinite(dataMax)||dataMax<=dataMin){dataMin=0;dataMax=1;}
+
+    const vMin = USE_FIXED_DOMAIN ? DOMAIN_MIN : dataMin;
+    const vMax = USE_FIXED_DOMAIN ? DOMAIN_MAX : dataMax;
+
+    th.min=vMin.toFixed(2);
+    th.max=vMax.toFixed(2);
+    th.step='0.01';
+
+    const cur=Number(th.value);
+    if(!Number.isFinite(cur)||cur<vMin||cur>vMax){
+      th.value=(USE_FIXED_DOMAIN ? 0.50 : (vMin+0.1*(vMax-vMin))).toFixed(2);
+    }
+
+    thv.textContent=Number(th.value).toFixed(2);
+    renderLegend(vMin,vMax);
+    drawLayer(Number(th.value),vMin,vMax);
+  }
+
+  let debounce=null;
+  th.addEventListener('input',()=>{
+    thv.textContent=Number(th.value).toFixed(2);
+    clearTimeout(debounce);
+    debounce=setTimeout(()=>recomputeAndRedraw(),80);
+  });
+
+  async function loadLatest(){
+    try{
+      const meta=await getJSON('/predictions/latest.json');
+      probCol=meta.prob_col||'p_rf';
+      setSubtitle(meta);
+    }catch(e){ console.warn('latest.json missing'); }
+    const geo=await getJSON('/predictions/latest.geojson');
+    features=(geo.features||[]).filter(f=>f&&f.properties);
+    recomputeAndRedraw();
+    runPaths.innerHTML=`<span class="muted">GeoJSON:</span> <code class="mono">/predictions/latest.geojson</code>`;
+  }
+
+  async function loadByDate(dateStr){
+    const rec=(manifest.runs||[]).find(r=>r.date===dateStr);
+    if(!rec)throw new Error(`Run not found: ${dateStr}`);
+    const meta=await getJSON('/'+rec.meta);
+    probCol=(meta.prob_col||'p_rf');
+    setSubtitle(meta);
+    const geo=await getJSON('/'+rec.geojson);
+    features=(geo.features||[]).filter(f=>f&&f.properties);
+    recomputeAndRedraw();
+    runPaths.innerHTML=`<span class="muted">GeoJSON:</span> <code class="mono">/${rec.geojson}</code><br><span class="muted">Parquet:</span> <code class="mono">/${rec.parquet}</code>`;
+  }
+
+  function populateRuns(){
+    runSelect.innerHTML='';
+    const optL=document.createElement('option');
+    optL.value='__latest__'; optL.textContent='Latest';
+    runSelect.appendChild(optL);
+    for(const r of (manifest.runs||[])){
+      const o=document.createElement('option'); o.value=r.date; o.textContent=r.date;
+      runSelect.appendChild(o);
+    }
+    runCount.textContent=`${(manifest.runs||[]).length} archived`;
+    runSelect.value='__latest__';
+  }
+
+  runSelect.addEventListener('change',async e=>{
+    const v=e.target.value;
+    try{
+      setTop('Loading…');
+      if(v==='__latest__') await loadLatest();
+      else await loadByDate(v);
+    }catch(err){
+      console.error(err);
+      setTop('Load error');
+    }
+  });
+
+  try{ manifest=await getJSON('/predictions/index.json'); }
+  catch(e){ console.warn('index.json missing'); manifest={runs:[],latest:null}; }
+
+  populateRuns();
+  await loadLatest();
 })();
 </script>
 </body>
