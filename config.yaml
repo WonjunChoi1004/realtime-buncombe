@@ -18,14 +18,7 @@ columns:
   soil: soil_depth_cm
 
 features:
-  # Map friendly names used in models to actual dataframe columns
-  aliases: {}
-
-  # Build once during feature prep (cast to 0/1 in code if needed)
-  derived:
-    Soil_Depth_Deep200_Flag: "soil_depth_cm >= 200"
-
-  # Rainfall feature names as they exist in your daily features
+  static: [elevation_m, slope_deg, soil_depth_cm]
   rainfall_all: [R1d, R3d, R7d, R30d, Max_Rainfall_3day, Max_Rainfall_30day]
 
 models:
@@ -40,3 +33,33 @@ models:
   xgb:
     path: models/model_XGB_F2.joblib
     features: [Max_Rainfall_30day, Max_Rainfall_3day, R7d, R30d, elevation_m, slope_deg, Soil_Depth_Deep200_Flag]
+
+# === PRISM daily rainfall sync (used by the sync script below) ===
+prism_sync:
+  base_url: "https://data.prism.oregonstate.edu/time_series/us/an/800m"
+  variable: "ppt"            # precipitation
+  timescale: "daily"
+  resolution: "30s"          # 30 arc-seconds (~800 m)
+
+  rainfall_dir: "data/rain"  # resolved relative to config file if not absolute
+  prefix: "prism_ppt_us_30s_"  # filename/folder prefix (unchanged by PRISM)
+
+  # Window: yesterday back to today-30; keep only the past 30 days
+  start_offset_days: 1
+  end_offset_days: 30
+  retention_days: 30
+
+  # Compare ONLY local .meta_2025-10-17.json vs remote HEAD
+  compare_fields: ["etag", "last_modified_utc", "content_length"]
+
+  # Extraction policy
+  extract: true
+  delete_zip_after_extract: true
+  verify_tif: true  # require prism_ppt_us_30s_YYYYMMDD/prism_ppt_us_30s_YYYYMMDD.tif
+
+  timeouts:
+    head_seconds: 30
+    get_seconds: 180
+  retries:
+    max_attempts: 3
+    backoff_seconds: 2

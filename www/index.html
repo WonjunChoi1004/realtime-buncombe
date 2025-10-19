@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Buncombe Landslide Risk — Latest</title>
+  <title>Buncombe Landslide Risk — Latest & History</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Near–real-time landslide risk map for Buncombe County, NC. Fuses daily rainfall windows with terrain and soils to show grid cells exceeding a chosen probability threshold." />
+  <meta name="description" content="Near–real-time landslide risk map for Buncombe County, NC, with historical runs." />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <style>
@@ -27,46 +27,61 @@
     .slider { width: 220px; }
     .row { margin: 6px 0; }
 
-    /* About button + overlay */
-    .about-btn {
-      position: absolute; z-index: 910; top: 10px; right: 12px;
+    .about-btn, .runs-btn {
+      position: absolute; z-index: 910; top: 10px;
       background:#fff; border:1px solid #ccc; border-radius:8px; padding:6px 10px;
       font: 13px/1 system-ui, sans-serif; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.12);
     }
-    .about-overlay {
-      position: absolute; z-index: 905; top: 56px; right: 12px; max-width: 360px;
+    .about-btn { right: 12px; }
+    .runs-btn { right: 92px; }
+
+    .overlay {
+      position: absolute; z-index: 905; top: 56px; right: 12px; max-width: 380px;
       background: rgba(255,255,255,0.98); border:1px solid #ddd; border-radius:12px;
       padding: 12px 14px; box-shadow: 0 6px 24px rgba(0,0,0,.18); display: none;
       font: 13px/1.35 system-ui, sans-serif;
     }
-    .about-overlay h3 { margin:0 0 6px 0; font-size:14px; }
-    .about-overlay p { margin:6px 0; }
-    .about-row { color:#333; }
+    .overlay h3 { margin:0 0 6px 0; font-size:14px; }
+    .overlay p { margin:6px 0; }
     .muted { color:#666; }
-    .linklike { color:#0b6; text-decoration:none; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
     .close-x { float:right; cursor:pointer; font-weight:700; padding:2px 6px; border-radius:6px; }
     .close-x:hover { background:#eee; }
+    .row-inline { display:flex; gap:8px; align-items:center; }
+    .select { font: 13px/1.2 system-ui, sans-serif; padding:4px 8px; }
   </style>
 </head>
 <body>
 <div id="map"></div>
 
+<button id="runsBtn" class="runs-btn" aria-haspopup="dialog" aria-controls="runsBox">Runs</button>
 <button id="aboutBtn" class="about-btn" aria-haspopup="dialog" aria-controls="aboutBox">About</button>
-<div id="aboutBox" class="about-overlay" role="dialog" aria-modal="false" aria-labelledby="aboutTitle">
+
+<div id="runsBox" class="overlay" role="dialog" aria-modal="false" aria-labelledby="runsTitle">
+  <div><span id="runsClose" class="close-x" aria-label="Close">×</span></div>
+  <h3 id="runsTitle">Choose a run</h3>
+  <div class="row-inline">
+    <label for="runSelect"><b>Date</b></label>
+    <select id="runSelect" class="select" aria-label="Select date"></select>
+    <span class="muted" id="runCount"></span>
+  </div>
+  <p class="muted" id="runPaths"></p>
+</div>
+
+<div id="aboutBox" class="overlay" role="dialog" aria-modal="false" aria-labelledby="aboutTitle">
   <div><span id="aboutClose" class="close-x" aria-label="Close">×</span></div>
   <h3 id="aboutTitle">About this map</h3>
-  <p class="about-row">
-    This site shows a <b>near–real-time landslide risk</b> layer for <b>Buncombe County, NC</b>.
-    It combines <b>daily rainfall windows</b> (e.g., 1–30&nbsp;day sums and 3/30-day maxima)
-    with <b>terrain</b> (elevation, slope) and <b>soil depth</b> to estimate the probability that a grid cell is susceptible to rainfall-triggered landslides today.
+  <p>
+    Near–real-time landslide risk for <b>Buncombe County, NC</b>. Combines <b>daily rainfall windows</b>
+    with <b>terrain</b> and <b>soil depth</b> to estimate probability per grid cell.
   </p>
-  <p class="about-row">
-    Use the <b>Threshold</b> slider to reveal only grid cells with predicted probability
-    <em>p</em> above your chosen cutoff. The legend reflects the current probability scale (<span class="muted">darker = higher</span>).
+  <p>
+    Use the <b>Threshold</b> slider to reveal only cells with predicted probability
+    <em>p</em> above your cutoff. Darker = higher probability.
   </p>
-  <p class="about-row muted" id="aboutMeta">Latest run: — · model: — · prob: — · rows: —</p>
-  <p class="about-row muted">
-    Data endpoints: <code>/api/latest</code> (metadata) and <code>/predictions/latest.geojson</code> (tiles/grid).
+  <p class="muted" id="aboutMeta">Latest run: — · model: Random Forest · prob: p_rf · rows: —</p>
+  <p class="muted">
+    Data: <code class="mono">/predictions/index.json</code> (manifest), <code class="mono">/predictions/latest.geojson</code>, <code class="mono">/predictions/latest.json</code>
   </p>
 </div>
 
@@ -87,35 +102,34 @@
   const th = document.getElementById('th');
   const thv = document.getElementById('thv');
   const legendDiv = document.getElementById('legend');
-
   const aboutBtn = document.getElementById('aboutBtn');
   const aboutBox = document.getElementById('aboutBox');
   const aboutClose = document.getElementById('aboutClose');
   const aboutMeta = document.getElementById('aboutMeta');
 
+  const runsBtn = document.getElementById('runsBtn');
+  const runsBox = document.getElementById('runsBox');
+  const runsClose = document.getElementById('runsClose');
+  const runSelect = document.getElementById('runSelect');
+  const runCount = document.getElementById('runCount');
+  const runPaths = document.getElementById('runPaths');
+
+  let map, layer, features = [], probCol = 'p_rf';
+  let manifest = { runs: [], latest: null };
+
   function setTop(msg){ top.firstChild.nodeValue = msg + ' '; }
+  function show(el, show){ el.style.display = show ? 'block' : 'none'; }
+  function toggle(el){ show(el, el.style.display !== 'block'); }
+  aboutBtn.addEventListener('click', () => toggle(aboutBox));
+  aboutClose.addEventListener('click', () => show(aboutBox, false));
+  runsBtn.addEventListener('click', () => toggle(runsBox));
+  runsClose.addEventListener('click', () => show(runsBox, false));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { show(aboutBox, false); show(runsBox, false); }});
 
-  // About toggle
-  function showAbout(show){
-    aboutBox.style.display = show ? 'block' : 'none';
-    aboutBtn.setAttribute('aria-expanded', show ? 'true' : 'false');
-  }
-  aboutBtn.addEventListener('click', () => showAbout(aboutBox.style.display !== 'block'));
-  aboutClose.addEventListener('click', () => showAbout(false));
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') showAbout(false); });
-
-  // Map
-  let map;
   try {
     map = L.map('map', { preferCanvas: true }).setView([35.6, -82.5], 10);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-  } catch (e) {
-    console.error('Leaflet init error:', e);
-    setTop('Error: could not initialize map.');
-    return;
-  }
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
+  } catch (e) { console.error('Leaflet init error:', e); setTop('Error: could not initialize map.'); return; }
 
   async function getJSON(url) {
     const r = await fetch(url, { cache: 'no-store' });
@@ -123,46 +137,15 @@
     return await r.json();
   }
 
-  // Load meta + data
-  let meta, probCol = 'p_logistic';
-  let features = [];
-  try {
-    meta = await getJSON('/api/latest');
-    probCol = meta.prob_col || 'p_logistic';
-    const date = meta.target_date || 'n/a';
-    const model = meta.model || 'n/a';
-    const rows = meta.rows ?? 'n/a';
-
-    setTop(`Latest: ${date}`);
+  function setSubtitle(meta, modelKey) {
+    const date = meta?.date || meta?.target_date || 'n/a';
+    const rows = meta?.rows ?? 'n/a';
+    const model = modelKey || 'Random Forest';
+    setTop(`Run: ${date}`);
     subtitle.textContent = `model=${model} · prob_col=${probCol} · rows=${rows}`;
-    aboutMeta.textContent = `Latest run: ${date} · model: ${model} · prob: ${probCol} · rows: ${rows}`;
-  } catch (e) {
-    console.error('Meta error:', e);
-    setTop('Latest info unavailable');
-    subtitle.textContent = '';
+    aboutMeta.textContent = `Run: ${date} · model: ${model} · prob: ${probCol} · rows=${rows}`;
   }
 
-  try {
-    const geo = await getJSON('/predictions/latest.geojson');
-    features = (geo.features || []).filter(f => f && f.properties);
-  } catch (e) {
-    console.error('GeoJSON load error:', e);
-    setTop('Error loading latest.geojson');
-    return;
-  }
-
-  // Domain
-  const vals = features.map(f => Number(f.properties[probCol])).filter(Number.isFinite);
-  const dataMin = Math.min(...vals);
-  const dataMax = Math.max(...vals);
-  const vMin = Number.isFinite(dataMin) ? dataMin : 0;
-  const vMax = Number.isFinite(dataMax) ? dataMax : 1;
-  th.min = vMin.toFixed(2);
-  th.max = vMax.toFixed(2);
-  if (vMax - vMin > 0.2) th.value = (vMin + 0.1*(vMax - vMin)).toFixed(2);
-  thv.textContent = Number(th.value).toFixed(2);
-
-  // Color scale
   const stops = [
     [0.2, 0.4, 0.8],
     [0.1, 0.7, 0.7],
@@ -172,26 +155,24 @@
     [0.8, 0.1, 0.1],
   ];
   function lerp(a,b,t){ return a + (b-a)*t; }
-  function getColor(p) {
-    if (!Number.isFinite(p)) return '#999';
-    const t = (p - vMin) / Math.max(1e-9, (vMax - vMin));
-    const x = Math.max(0, Math.min(1, t)) * (stops.length - 1);
-    const i = Math.floor(x), f = x - i;
-    const c0 = stops[i|0], c1 = stops[Math.min(i+1, stops.length-1)];
-    const r = Math.round(lerp(c0[0], c1[0], f)*255);
-    const g = Math.round(lerp(c0[1], c1[1], f)*255);
-    const b = Math.round(lerp(c0[2], c1[2], f)*255);
-    return `rgb(${r},${g},${b})`;
+  function colorScale(vMin, vMax) {
+    return function(p){
+      if (!Number.isFinite(p)) return '#999';
+      const t = (p - vMin) / Math.max(1e-9, (vMax - vMin));
+      const x = Math.max(0, Math.min(1, t)) * (stops.length - 1);
+      const i = Math.floor(x), f = x - i;
+      const c0 = stops[i|0], c1 = stops[Math.min(i+1, stops.length-1)];
+      const r = Math.round(lerp(c0[0], c1[0], f)*255);
+      const g = Math.round(lerp(c0[1], c1[1], f)*255);
+      const b = Math.round(lerp(c0[2], c1[2], f)*255);
+      return `rgb(${r},${g},${b})`;
+    }
   }
 
-  // Legend
-  function renderLegend() {
-    const n = 6;
-    let bins = [];
-    for (let i=0;i<n;i++){
-      const a = vMin + (i/(n-1))*(vMax - vMin);
-      bins.push(a);
-    }
+  function renderLegend(vMin, vMax) {
+    const n = 6, bins = [];
+    for (let i=0;i<n;i++) bins.push(vMin + (i/(n-1))*(vMax - vMin));
+    const getColor = colorScale(vMin, vMax);
     let html = `<b>${probCol}</b> (${vMin.toFixed(2)}–${vMax.toFixed(2)})<br>`;
     for (let i=0;i<bins.length-1;i++){
       const mid = (bins[i] + bins[i+1]) / 2;
@@ -199,9 +180,7 @@
     }
     legendDiv.innerHTML = html;
   }
-  renderLegend();
 
-  // Popup
   const rainKeys = ['R1d','R3d','R7d','R30d','Max_Rainfall_3day','Max_Rainfall_30day'];
   function propsPopup(p, probKey) {
     const pv = Number(p[probKey]);
@@ -211,10 +190,9 @@
     return s;
   }
 
-  // Layer + threshold
-  let layer;
-  function draw(threshold) {
+  function drawLayer(threshold, vMin, vMax) {
     if (layer) map.removeLayer(layer);
+    const getColor = colorScale(vMin, vMax);
     layer = L.geoJSON({
       type: 'FeatureCollection',
       features: features.filter(f => Number(f.properties[probCol]) >= threshold)
@@ -228,22 +206,97 @@
         }).bindPopup(propsPopup(f.properties, probCol));
       }
     }).addTo(map);
-
-    try {
-      const b = layer.getBounds();
-      if (b.isValid()) map.fitBounds(b.pad(0.05), { animate: false });
-    } catch(_) {}
+    try { const b = layer.getBounds(); if (b.isValid()) map.fitBounds(b.pad(0.05), { animate: false }); } catch(_) {}
   }
 
-  draw(Number(th.value));
+  function recomputeAndRedraw() {
+    const vals = features.map(f => Number(f.properties[probCol])).filter(Number.isFinite);
+    const dataMin = Math.min(...vals), dataMax = Math.max(...vals);
+    const vMin = Number.isFinite(dataMin) ? dataMin : 0;
+    const vMax = Number.isFinite(dataMax) ? dataMax : 1;
+    th.min = vMin.toFixed(2); th.max = vMax.toFixed(2);
+    if (vMax - vMin > 0.2) th.value = (vMin + 0.1*(vMax - vMin)).toFixed(2);
+    thv.textContent = Number(th.value).toFixed(2);
+    renderLegend(vMin, vMax);
+    drawLayer(Number(th.value), vMin, vMax);
+  }
 
-  // Slider
-  let tId = null;
+  let debounce = null;
   th.addEventListener('input', () => {
     thv.textContent = Number(th.value).toFixed(2);
-    clearTimeout(tId);
-    tId = setTimeout(() => draw(Number(th.value)), 80);
+    clearTimeout(debounce);
+    debounce = setTimeout(() => recomputeAndRedraw(), 80);
   });
+
+  async function loadLatest() {
+    try {
+      const metaLatest = await getJSON('/predictions/latest.json');
+      probCol = metaLatest.prob_col || 'p_rf';
+      setSubtitle(metaLatest);
+    } catch (e) {
+      console.warn('latest.json missing, falling back to /api/latest', e);
+      try {
+        const apiMeta = await getJSON('/api/latest');
+        probCol = apiMeta.prob_col || 'p_rf';
+        setSubtitle(apiMeta);
+      } catch (err) {
+        console.error('Meta error:', err);
+        setTop('Latest info unavailable');
+        subtitle.textContent = '';
+      }
+    }
+    const geo = await getJSON('/predictions/latest.geojson');
+    features = (geo.features || []).filter(f => f && f.properties);
+    recomputeAndRedraw();
+    runPaths.innerHTML = `<span class="muted">GeoJSON:</span> <code class="mono">/predictions/latest.geojson</code>`;
+  }
+
+  async function loadByDate(dateStr) {
+    const rec = (manifest.runs || []).find(r => r.date === dateStr);
+    if (!rec) throw new Error(`Run not found: ${dateStr}`);
+    const meta = await getJSON('/' + rec.meta);
+    probCol = (meta.prob_col || 'p_rf');
+    setSubtitle(meta);
+    const geo = await getJSON('/' + rec.geojson);
+    features = (geo.features || []).filter(f => f && f.properties);
+    recomputeAndRedraw();
+    runPaths.innerHTML = `<span class="muted">GeoJSON:</span> <code class="mono">/${rec.geojson}</code><br><span class="muted">Parquet:</span> <code class="mono">/${rec.parquet}</code>`;
+  }
+
+  function populateRuns() {
+    runSelect.innerHTML = '';
+    const optLatest = document.createElement('option');
+    optLatest.value = '__latest__'; optLatest.textContent = 'Latest';
+    runSelect.appendChild(optLatest);
+    for (const r of (manifest.runs || [])) {
+      const o = document.createElement('option');
+      o.value = r.date; o.textContent = r.date;
+      runSelect.appendChild(o);
+    }
+    runCount.textContent = `${(manifest.runs||[]).length} archived`;
+    runSelect.value = '__latest__';
+  }
+
+  runSelect.addEventListener('change', async (e) => {
+    const v = e.target.value;
+    try {
+      setTop('Loading…');
+      if (v === '__latest__') await loadLatest();
+      else await loadByDate(v);
+    } catch (err) {
+      console.error(err);
+      setTop('Load error');
+    }
+  });
+
+  try {
+    manifest = await getJSON('/predictions/index.json');
+  } catch (e) {
+    console.warn('index.json missing; only Latest is available.', e);
+    manifest = { runs: [], latest: null };
+  }
+  populateRuns();
+  await loadLatest();
 })();
 </script>
 </body>

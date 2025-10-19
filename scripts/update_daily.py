@@ -147,7 +147,7 @@ def main():
             "features": FEATURES,
             "minzoom": MINZ, "maxzoom": MAXZ
         }
-        (day_dir / "meta.json").write_text(json.dumps(meta, indent=2))
+        (day_dir / "meta_2025-10-17.json").write_text(json.dumps(meta, indent=2))
         print(f"Published {TODAY}")
 
 if __name__ == "__main__":

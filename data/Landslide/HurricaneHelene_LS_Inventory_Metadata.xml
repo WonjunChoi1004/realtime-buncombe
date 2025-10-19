@@ -1,0 +1,463 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metadata>
+  <idinfo>
+    <citation>
+      <citeinfo>
+        <origin>Burgi, Paula</origin>
+        <origin>Toney, Liam</origin>
+        <origin>Collins, Elaine</origin>
+        <origin>Murphy, Colleen</origin>
+        <origin>Ellison, Sonia</origin>
+        <origin>Schmitt, Robert</origin>
+        <origin>Allstadt, Kate</origin>
+        <origin>Bedinger, Emily</origin>
+        <origin>Belair, Gina</origin>
+        <origin>Bilderback, Eric</origin>
+        <origin>Carlson Dunlap, Lynn Ramon</origin>
+        <origin>Cattanach, Bart</origin>
+        <origin>Crawford, Matt</origin>
+        <origin>Einbund, Mason</origin>
+        <origin>Fitzpatrick, Faith</origin>
+        <origin>Frost, J David</origin>
+        <origin>Grant, Alex</origin>
+        <origin>Hageman, Stephen J.</origin>
+        <origin>Hartman, Courtney</origin>
+        <origin>Heckert, Andrew B.</origin>
+        <origin>Hoch, Olivia</origin>
+        <origin>Johnson, Brad</origin>
+        <origin>Jones, Eric</origin>
+        <origin>Jurgevich, Jeremy</origin>
+        <origin>Karantanellis, Efstratios</origin>
+        <origin>Korte, David</origin>
+        <origin>Martinez, Sabrina</origin>
+        <origin>Merschat, Arthur</origin>
+        <origin>Miles, Charles</origin>
+        <origin>Sas, Robert</origin>
+        <origin>Schaefer, Lauren</origin>
+        <origin>Scheip, Corey</origin>
+        <origin>Soobitsky, Rachel</origin>
+        <origin>Trantham, Brennan</origin>
+        <origin>Witt, Anne</origin>
+        <pubdate>20250116</pubdate>
+        <title>Preliminary Landslide Inventory for Landslides Triggered by Hurricane Helene (September 2024)</title>
+        <geoform>vector digital data</geoform>
+        <pubinfo>
+          <pubplace>Reston, VA</pubplace>
+          <publish>U.S. Geological Survey data release</publish>
+        </pubinfo>
+        <onlink>https://doi.org/10.5066/P14CHGKS</onlink>
+      </citeinfo>
+    </citation>
+    <descript>
+      <abstract>We present a preliminary point inventory of landslides triggered by Hurricane Helene, which impacted southern Appalachia between September 25–27, 2024. This inventory is a result of a rapid response mapping effort led by the U.S. Geological Survey’s Landslide Assessments, Situational Awareness, and Event Response Research (LASER) project. LASER collaborated with state surveys and landslide researchers to identify landslides and their impacts for situational awareness and emergency response. The area of interest (AOI) for this effort was informed by a preliminary landslide hazard map created for the event (Martinez et al., 2024), and encompasses western North Carolina as well as parts of Tennessee, Virginia, Georgia, and South Carolina.    
+
+This point inventory contains the following attributes: ‘Source’ and ‘Impact’. 
+
+The ‘Source’ attribute identifies the data source(s) used to map each landslide. Note that the data sources listed in this attribute refer only to those used for mapping a given landslide; this does not imply that the landslide is absent or undocumented in other unlisted sources. We do not provide any specific information or metadata (e.g., footprint ID, imagery date, hyperlinks, etc.) for the listed source(s) used to map a landslide.  The sources used for mapping landslides in this inventory are listed in Table 1.  We relied heavily on Sentinel-2 satellite data during the mapping phase and exclusively during the review phase. While Sentinel-2 has a lower spatial resolution (10m) compared to other satellite and aerial sources (ranging from 0.15 to 3m), it is the only dataset with complete mapping AOI coverage and pre- and post-event multi-spectral imagery. The primary Sentinel-2 images used were acquired on August 26, 2024, and September 22, 2024 (pre-event), as well as October 2, 5, 7, 10, and 12, 2024 (post-event). To assist in rapid landslide detection, we derived Normalized Difference Vegetation Index (NDVI) change products using various combinations of the pre- and post-event Sentinel-2 data. NDVI change analysis was instrumental in identifying areas where vegetation loss or damage occurred, thus helping to pinpoint potential landslide activity in this heavily vegetated region. Additionally, red-green-blue (RGB) composite imagery from both pre- and post-event acquisitions was used to validate that NDVI changes were indeed indicative of landslides. Details on these data sources and analysis methods area can be found in Burgi et al. (2024). The data sources listed in the ‘Source’ attribute listed in alphabetical order.  
+
+The ‘Impact’ attribute indicates the primary impact of a landslide. The options for the impact attribute are listed in Table 2. A landslide is deemed to have an impact if it appears to intersect with river(s) (including streams and creeks), road(s), building(s), or other human-modified land or infrastructure (e.g., bridges, railroads, powerlines, trails, agricultural fields, lawns, etc.) Impact was determined to the best of a mapper’s ability with the available data and at the time that the imagery was acquired. Many landslides had multiple impacts; however, in most cases, a primary impact could be identified. For example, many landslides appeared to severely impact a road and continue to fail into a nearby river, with no visible impact on the river. In this case, the primary impact would be “road”. If a landslide appeared to have multiple and equally significant impacts, it was classified as “various”. We do not report the number of impacts; for example, a landslide with a “building” Impact may have impacted more than one building.  
+
+Emergency response landslide mapping efforts took place between September 28 to October 23, 2024. All landslides were mapped with a single point, irrespective of size or impact. Given the urgency of providing situational awareness for emergency response, landslide points were placed at the location of greatest visible impact, such as buildings, roads, and rivers, rather than at the headscarp. In cases where there was no visible impact, the landslide point was placed at the headscarp. Following the emergency mapping phase, all points underwent a basic review process to refine attributes, remove duplicate/low confidence points, add points for multi-source failures that coalesced into a single failure, and, where possible, adjust point locations from impact zones to the landslide headscarp(s). Reviewers utilized only Sentinel-2 NDVI and RGB imagery (pre- and post-event) for reference during the review process, relying most heavily on the 9/22 pre-event and 10/12 post-event products. Impactful landslides that are not clearly visible in the Sentinel-2 data (likely mapped using higher resolution data) were not repositioned to a headscarp and may remain at the impact location.  
+
+Due to the rapid and extensive nature of this mapping effort, a formal and systematic assessment of the positional accuracy of the mapped points has not yet been conducted. As a result, there may be some degree of uncertainty in the location and classification of landslides within this inventory. We estimate our accuracy of most landslide headscarp points to be within tens of meters of their correct location. However, in some cases, dense vegetation and imaging geometry may obscure the true headscarp location, further decreasing the accuracy of some mapped landslide points. Furthermore, field or high-resolution validation was not possible for every landslide, therefore some mapped points may not correspond to actual landslide events. In particular, distinguishing landslides from severe tree blowdowns or areas of recently human-modified land cover (e.g., clearcutting or construction activities) sometimes proved challenging. It is possible that a small number of points mistakenly represent these features instead of genuine landslides.  
+
+Finally, it is important to note that this inventory is preliminary and does not capture the full extent of landslides triggered by Hurricane Helene. Factors such as the rapid response nature of the mapping effort, limitations in imagery resolution, and dense forest canopy that obstructed the overhead (i.e., aerial and satellite) view of smaller or non-catastrophic landslides may contribute to underrepresentation of the total landslide count.  
+
+References 
+
+Burgi, P.M., Collins, E.A., Allstadt, K.E., Einbund, M.M., 2024, Normalized Difference Vegetation Index (NDVI) Change Map between 9/22/2024 and 10/12/2024, Southern Appalachian Mountains: 2024 USGS provisional data release. https://doi.org/10.5066/P14KDUKK 
+
+Martinez, S.N., Stanley, T., Allstadt, K.E., Baxstrom, K.W., Mirus, B.B., Einbund, M.M., Bedinger, E.C., 2024, Preliminary Landslide Hazard Models for the 2024 Hurricane Helene Landslide Emergency Response: 2024 USGS Provisional Data Release. https://doi.org/10.5066/P134ERB9</abstract>
+      <purpose>Hurricanes can impact regions with heavy precipitation and strong winds and may result in wide-spread and numerous landslides. Rapid response landslide inventories during these events provide timely science information to partner agencies, emergency responders, and the public.</purpose>
+    </descript>
+    <timeperd>
+      <timeinfo>
+        <rngdates>
+          <begdate>20240930</begdate>
+          <enddate>20241023</enddate>
+        </rngdates>
+      </timeinfo>
+      <current>publication date</current>
+    </timeperd>
+    <status>
+      <progress>Complete</progress>
+      <update>None planned</update>
+    </status>
+    <spdom>
+      <bounding>
+        <westbc>-84.4355</westbc>
+        <eastbc>-80.9038</eastbc>
+        <northbc>36.8574</northbc>
+        <southbc>34.6770</southbc>
+      </bounding>
+    </spdom>
+    <keywords>
+      <theme>
+        <themekt>ISO 19115 Topic Category</themekt>
+        <themekey>geoscientificInformation</themekey>
+      </theme>
+      <theme>
+        <themekt>USGS Thesaurus</themekt>
+        <themekey>landslides</themekey>
+        <themekey>landslide susceptibility assessment</themekey>
+        <themekey>geographic information systems</themekey>
+        <themekey>slope processes</themekey>
+        <themekey>topography</themekey>
+        <themekey>Landslide inventory</themekey>
+        <themekey>Rapid Response</themekey>
+        <themekey>Hurricane Helene</themekey>
+      </theme>
+      <theme>
+        <themekt>USGS Metadata Identifier</themekt>
+        <themekey>USGS:674634a1d34e6d1dac3abddc</themekey>
+      </theme>
+      <place>
+        <placekt>Common geographic areas</placekt>
+        <placekey>United States</placekey>
+        <placekey>Hurricane Helene</placekey>
+      </place>
+      <temporal>
+        <tempkt>USGS Thesaurus</tempkt>
+        <tempkey>Current</tempkey>
+      </temporal>
+    </keywords>
+    <accconst>None.</accconst>
+    <useconst>None. Users are advised to read the dataset’s metadata thoroughly to understand appropriate use and data limitation.</useconst>
+    <ptcontac>
+      <cntinfo>
+        <cntperp>
+          <cntper>Paula M Burgi</cntper>
+          <cntorg>USGS - ROCKY MOUNTAIN REGION</cntorg>
+        </cntperp>
+        <cntpos>Research Geophysicist- Mendenhall</cntpos>
+        <cntaddr>
+          <addrtype>mailing and physical</addrtype>
+          <address>1711 Illinois St</address>
+          <city>Golden</city>
+          <state>CO</state>
+          <postal>80401</postal>
+          <country>USA</country>
+        </cntaddr>
+        <cntvoice>303-273-8570</cntvoice>
+        <cntemail>pburgi@usgs.gov</cntemail>
+      </cntinfo>
+    </ptcontac>
+    <datacred>Funding for the preparation of this inventory was provided by the U.S. Geological Survey.</datacred>
+    <native>Environment as of Metadata Creation:  Esri ArcGIS, QGIS.
+
+Any use of trade, firm, or product names is for descriptive purposes only and does not imply endorsement by the U.S. Government.</native>
+  </idinfo>
+  <dataqual>
+    <attracc>
+      <attraccr>No formal attribute accuracy tests were conducted</attraccr>
+    </attracc>
+    <logic>No topology tests conducted. The dataset was reviewed by two USGS scientists for consistency. However, due to the rapid response effort and large team there may be errors present.</logic>
+    <complete>The dataset is the result of rapid response mapping efforts and thus may be incomplete (i.e., some landslides may not have been mapped).</complete>
+    <posacc>
+      <horizpa>
+        <horizpar>No formal positional accuracy tests were conducted</horizpar>
+      </horizpa>
+      <vertacc>
+        <vertaccr>No formal positional accuracy tests were conducted</vertaccr>
+      </vertacc>
+    </posacc>
+    <lineage>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>Copernicus, ESA</origin>
+            <pubdate>2024</pubdate>
+            <title>European Space Agency (ESA), Copernicus Sentinel-2 data 2024, processed by USGS.</title>
+            <geoform>remote-sensing image</geoform>
+            <onlink>https://scihub.copernicus.eu/dhus.</onlink>
+          </citeinfo>
+        </srccite>
+        <typesrc>Digital and/or Hardcopy</typesrc>
+        <srctime>
+          <timeinfo>
+            <rngdates>
+              <begdate>20240930</begdate>
+              <enddate>20241023</enddate>
+            </rngdates>
+          </timeinfo>
+          <srccurr>ground condition</srccurr>
+        </srctime>
+        <srccitea>Sentinel-2</srccitea>
+        <srccontr>Mapping Input</srccontr>
+      </srcinfo>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>Planet Labs PBC</origin>
+            <pubdate>2024</pubdate>
+            <title>Planet Labs PBC, PlanetScope data 2024, processed by USGS.</title>
+            <geoform>remote-sensing image</geoform>
+            <onlink>https://earth.esa.int/eogateway/missions/planetscope</onlink>
+          </citeinfo>
+        </srccite>
+        <typesrc>Digital and/or Hardcopy</typesrc>
+        <srctime>
+          <timeinfo>
+            <rngdates>
+              <begdate>20240930</begdate>
+              <enddate>20241023</enddate>
+            </rngdates>
+          </timeinfo>
+          <srccurr>ground condition</srccurr>
+        </srctime>
+        <srccitea>PlanetScope</srccitea>
+        <srccontr>Mapping Input</srccontr>
+      </srcinfo>
+      <procstep>
+        <procdesc>Identified potential landslide features using satellite imagery (Sentinel-2, PlanetScope), aerial imagery (USGS reconnaissance, NOAA, CAP), media reports, official reports, personal communication,  and field observation.</procdesc>
+        <srcused>Sentinel-2</srcused>
+        <srcused>PlanetScope</srcused>
+        <procdate>20240930</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>If using satellite imagery, determine if the landslide was associated with the hurricane by comparing to pre-event satellite imagery from the previously mentioned satellite sources. If using other methods, determine if the landslide was associated with the hurricane by comparing to pre-event satellite imagery from the previously mentioned satellite sources as well as Google Earth imagery.  In addition, Sentinel-2 derived NDVI change products that differenced pre-event and post-event NDVI was a useful tool to determine if the landslide was associated with the hurricane.</procdesc>
+        <srcused>Sentinel-2</srcused>
+        <procdate>20240930</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Two attributes were given to each landslide point: Source and Impact. The Source was determined by the mapper to be the sources used by the mapper to map the landslide (not including pre-event references). To determine whether or not a feature had an impact (i.e., if it appears to intersect with a river or the build environment), we referenced a variety of base layers, including Google Maps, Bing Maps, and OpenStreetMap. Based on this, we gave each landslide an ‘impact’ attribute.  
+
+Then, as best as possible, we mapped the location (using a point) of the landslide. Initially (before the review process), this is how the landslides were mapped: (1) if the landslide did not have an impact, the point was placed at the headscarp, or (2) if the landslide did have an impact, the point was placed at the impact location or center of the impact locations.</procdesc>
+        <procdate>20240930</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>After mapping, all points went through a review. As part of this review, all landslide points were moved to the headscarp location (if visible in Sentinel-2 imagery) and duplicate points were removed.</procdesc>
+        <srcused>Sentinel-2</srcused>
+        <srcused>PlanetScope</srcused>
+        <procdate>20240930</procdate>
+      </procstep>
+    </lineage>
+  </dataqual>
+  <spdoinfo>
+    <direct>Vector</direct>
+    <ptvctinf>
+      <sdtsterm>
+        <sdtstype>Entity point</sdtstype>
+        <ptvctcnt>2217</ptvctcnt>
+      </sdtsterm>
+    </ptvctinf>
+  </spdoinfo>
+  <spref>
+    <horizsys>
+      <geograph>
+        <latres>0.0197662018</latres>
+        <longres>0.0242441337</longres>
+        <geogunit>Decimal seconds</geogunit>
+      </geograph>
+      <geodetic>
+        <horizdn>WGS_1984</horizdn>
+        <ellips>WGS 84</ellips>
+        <semiaxis>6378137.0</semiaxis>
+        <denflat>298.257223563</denflat>
+      </geodetic>
+    </horizsys>
+  </spref>
+  <eainfo>
+    <detailed>
+      <enttyp>
+        <enttypl>ground_failure_points_checked_v1.shp Attribute Table</enttypl>
+        <enttypd>Table containing attribute information associated with the data set.</enttypd>
+        <enttypds>Producer Defined</enttypds>
+      </enttyp>
+      <attr>
+        <attrlabl>FID</attrlabl>
+        <attrdef>Internal feature number.</attrdef>
+        <attrdefs>ESRI</attrdefs>
+        <attrdomv>
+          <udom>Sequential unique whole numbers that are automatically generated.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Shape</attrlabl>
+        <attrdef>Feature geometry.</attrdef>
+        <attrdefs>ESRI</attrdefs>
+        <attrdomv>
+          <udom>Shape type.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Source</attrlabl>
+        <attrdef>Landslide Mapping Information Sources</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <udom>Source/Abbreviation/Description  
+
+Sentinel-2 
+
+S2 
+
+Sentinel-2A/B satellite imagery (resolution: 10 m)  
+
+Planet Labs 
+
+PL 
+
+Planet Labs PlanetScope satellite imagery (resolution: 3-5 m)  
+
+CAP imagery 
+
+CAP 
+
+Photos taken from aircraft by the Civil Air Patrol (CAP)  
+
+USGS reconnaissance imagery 
+
+UA 
+
+Photos taken from aircraft by USGS aerial reconnaissance team  
+
+NOAA imagery 
+
+NO 
+
+Photos taken from aircraft by NOAA 
+
+Media report 
+
+MR 
+
+Media report by mainstream or social media  
+
+Field observation 
+
+FO 
+
+On-the-ground field observation by landslide expert 
+
+Personal communication 
+
+PC 
+
+Direct communication with citizens, including emergency managers and residents 
+
+Department of Transportation (North Carolina or Virginia) 
+
+DOT 
+
+Incident report by state department of transportation</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Impact</attrlabl>
+        <attrdef>Impact of Landslide Initiation/Runout</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>Road</edomv>
+            <edomvd>Landslide primarily impacts river(s) (including creeks, streams, etc.)</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Various</edomv>
+            <edomvd>Landslide for which there is more than one primary impact</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>UNCLEAR</edomv>
+            <edomvd>Landslide for which imagery is not sufficiently clear to determine if there is an impact</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Building</edomv>
+            <edomvd>Landslide primarily impacts building(s)</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>River</edomv>
+            <edomvd>Landslide primarily impacts river(s) (including creeks, streams, etc.)</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Other</edomv>
+            <edomvd>Landslide primary impact is something other than a river, road, or building (including railroad, bridge, lake, pond, reservoir, farm field, trail)</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>NONE</edomv>
+            <edomvd>Landslide does not appear to impact rivers or built environment</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+    </detailed>
+  </eainfo>
+  <distinfo>
+    <distrib>
+      <cntinfo>
+        <cntorgp>
+          <cntorg>U.S. Geological Survey</cntorg>
+          <cntper>GS ScienceBase</cntper>
+        </cntorgp>
+        <cntaddr>
+          <addrtype>mailing address</addrtype>
+          <address>Denver Federal Center, Building 810, Mail Stop 302</address>
+          <city>Denver</city>
+          <state>CO</state>
+          <postal>80225</postal>
+          <country>United States</country>
+        </cntaddr>
+        <cntvoice>1-888-275-8747</cntvoice>
+        <cntemail>sciencebase@usgs.gov</cntemail>
+      </cntinfo>
+    </distrib>
+    <distliab>Provisional data may be inaccurate due to instrument malfunctions or physical changes at the measurement site. Subsequent review based on field inspections and measurements may result in significant revisions to the data. The data are being provided to meet the need for timely best science and are released on the condition that neither the USGS nor the U.S. Government may be held liable for any damages resulting from authorized or unauthorized use of the information. Data users are cautioned to carefully consider the provisional nature of the information before using it for decisions that concern personal or public safety or the conduct of business that involves substantial monetary or operational consequences.</distliab>
+    <stdorder>
+      <digform>
+        <digtinfo>
+          <formname>Vector Digital Data Set (Point)</formname>
+        </digtinfo>
+        <digtopt>
+          <onlinopt>
+            <computer>
+              <networka>
+                <networkr>https://doi.org/10.5066/P14CHGKS</networkr>
+              </networka>
+            </computer>
+          </onlinopt>
+        </digtopt>
+      </digform>
+      <fees>None. No fees are applicable for obtaining the data set.</fees>
+    </stdorder>
+  </distinfo>
+  <metainfo>
+    <metd>20250116</metd>
+    <metc>
+      <cntinfo>
+        <cntperp>
+          <cntper>GHSC Data Steward</cntper>
+          <cntorg>U.S. Geological Survey, Geologic Hazards Science Center</cntorg>
+        </cntperp>
+        <cntpos>Open Data Policy coordinator</cntpos>
+        <cntaddr>
+          <addrtype>mailing and physical</addrtype>
+          <address>1711 Illinois Street</address>
+          <city>Golden</city>
+          <state>Colorado</state>
+          <postal>80401</postal>
+          <country>USA</country>
+        </cntaddr>
+        <cntvoice>303-273-8500</cntvoice>
+        <cntemail>ghsc_metadata@usgs.gov</cntemail>
+      </cntinfo>
+    </metc>
+    <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+    <metstdv>FGDC-STD-001-1998</metstdv>
+  </metainfo>
+</metadata>
