@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Asheville Landslide Project — Summary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Summary of the Buncombe County landslide risk model and the web application features." />
+  <style>
+    :root { --fg:#0b2239; --muted:#5b6b7a; --card:#fff; --bg:#f6f8fb; }
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; background:var(--bg); color:var(--fg); font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .wrap { max-width: 920px; margin: 32px auto; padding: 0 16px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 16px; }
+    h1 { font-size: 1.8rem; margin:0; }
+    .actions a { text-decoration:none; color:#fff; background:#0b6; padding:10px 14px; border-radius:10px; display:inline-block; }
+    .card { background:var(--card); border:1px solid #e7ecf2; border-radius:14px; padding:18px 18px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+    h2 { font-size:1.25rem; margin:0 0 10px; }
+    .muted { color: var(--muted); }
+    ul { margin:8px 0 0 20px; }
+    code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .grid { display:grid; grid-template-columns: 1fr; gap:16px; }
+    @media (min-width: 880px){ .grid { grid-template-columns: 1fr 1fr; } }
+    .pill { display:inline-block; font-size:12px; border:1px solid #dbe4ee; border-radius:999px; padding:2px 8px; color:#234; background:#fff; }
+    a.inline { color:#0a6; text-decoration:none; }
+    .back { text-decoration:none; font-weight:600; color:#0a6; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Asheville Landslide Project — Summary</h1>
+      <div class="actions">
+        <a class="pill" href="index.html" title="Back to the live map">← Live Map</a>
+      </div>
+    </header>
+
+    <div class="card">
+      <h2>Paper</h2>
+      <p class="muted">A concise overview plus a link to the full manuscript.</p>
+      <p>
+        <strong>A Dynamic Risk Prediction Model for Rainfall-Triggered Landslides in Buncombe County, North Carolina</strong><br/>
+        <a class="inline" href="/assets/buncombe-landslide-paper.pdf" target="_blank" rel="noopener">Read the paper (PDF)</a>
+      </p>
+      <ul>
+        <li><strong>Goal:</strong> Localized, near-real-time risk model fusing daily rainfall windows with terrain and soils.</li>
+        <li><strong>Data:</strong> 302 landslides (1981–2024) + 302 controls; PRISM daily rainfall windows (R1d, R3d, R7d, R30d, Max 3-day/30-day); USGS DEM (elevation &amp; slope); SSURGO soil depth.</li>
+        <li><strong>Models:</strong> Logistic Regression, Random Forest, XGBoost; stratified CV with spatial blocking; SHAP for interpretation.</li>
+        <li><strong>Findings:</strong> Slope dominates. Short-duration/intense rainfall boosts risk; prolonged 30-day accumulation can show a negative association with immediate triggering.</li>
+        <li><strong>Best overall:</strong> Random Forest with terrain + rainfall (~0.81 accuracy, ~0.89 AUC).</li>
+      </ul>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>How the model works</h2>
+        <ul>
+          <li>Daily PRISM precipitation is summarized into 1–30-day windows and rolling maxima.</li>
+          <li>Static terrain (elevation, slope) and soil depth are sampled on a county grid.</li>
+          <li>Random Forest outputs per-cell probabilities (<span class="mono">p_rf</span>), updated as new rainfall arrives.</li>
+          <li>Outputs are written to <span class="mono">predictions/historicData/YYYY/MM/</span> (Parquet, GeoJSON, meta).</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>What this website provides</h2>
+        <ul>
+          <li><strong>Latest map:</strong> <span class="mono">/predictions/latest.geojson</span> for immediate viewing.</li>
+          <li><strong>Historical runs:</strong> Date-addressable GeoJSON &amp; Parquet under <span class="mono">/predictions/historicData/...</span>.</li>
+          <li><strong>Manifest:</strong> <span class="mono">/predictions/index.json</span> lists all available dates for the “Runs” picker.</li>
+          <li><strong>Reproducibility:</strong> Each run has <span class="mono">meta_YYYY-MM-DD.json</span> with counts, date, features, and model info.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>How to cite</h2>
+      <p>
+        Please cite: <em>A Dynamic Risk Prediction Model for Rainfall-Triggered Landslides in Buncombe County, North Carolina</em>.
+        <a class="inline" href="/assets/buncombe-landslide-paper.pdf" target="_blank" rel="noopener">PDF</a>
+      </p>
+    </div>
+
+    <p><a class="back" href="index.html">← Back to the live map</a></p>
+  </div>
+</body>
+</html>
