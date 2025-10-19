@@ -23,6 +23,7 @@
     .pill { display:inline-block; font-size:12px; border:1px solid #dbe4ee; border-radius:999px; padding:2px 8px; color:#234; background:#fff; }
     a.inline { color:#0a6; text-decoration:none; }
     .back { text-decoration:none; font-weight:600; color:#0a6; }
+    .badge { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; background:#eef6f2; color:#0b6; border:1px solid #d9efe4; }
   </style>
 </head>
 <body>
@@ -70,6 +71,26 @@
           <li><strong>Reproducibility:</strong> Each run has <span class="mono">meta_YYYY-MM-DD.json</span> with counts, date, features, and model info.</li>
         </ul>
       </div>
+    </div>
+
+    <!-- NEW SECTION -->
+    <div class="card">
+      <h2>How to interpret it <span class="badge">probabilities</span></h2>
+      <ul>
+        <li><strong>What a probability means:</strong> Values are learned from a <em>balanced</em> dataset (302 landslides vs 302 non-events, 1981–2024). A value is the model’s estimated likelihood that current terrain + rainfall conditions resemble historical triggering conditions.</li>
+        <li><strong>Susceptibility vs forecast:</strong> On any given day, if you refresh rainfall windows (R1d–R30d, Max3d/30d) with current PRISM data, the map functions as a <em>nowcast</em> of instability conditioned on today’s hydrometeorology. It is not a multi-day forecast and should be interpreted as short-term (≈24 h) failure likelihood given present conditions.</li>
+        <li><strong>Reading the scale:</strong>
+          <ul>
+            <li><span class="mono">0.0–0.3</span> — low: conditions unlike past failures (generally stable)</li>
+            <li><span class="mono">0.4–0.6</span> — uncertain/watch: near historical thresholds; monitor during ongoing rain</li>
+            <li><span class="mono">0.7–1.0</span> — high: conditions closely match past triggers; prioritize attention</li>
+          </ul>
+        </li>
+        <li><strong>Thresholds:</strong> The default visual cutoff of 0.5 is for display only. For operations, choose a threshold via ROC/PR curves (e.g., Youden’s J) or by cost (favor recall for safety-critical alerts).</li>
+        <li><strong>Calibration:</strong> To treat values as actionable probabilities, evaluate reliability (e.g., Brier score, reliability curves) on recent years and apply Platt or isotonic calibration if needed.</li>
+        <li><strong>Caveats:</strong> Map indicates likelihood, not consequence (size/runout). Resolution limits (PRISM grid), reporting bias in historical inventories, and terrain changes (construction, vegetation) can affect accuracy.</li>
+        <li><strong>Example:</strong> A pixel with <span class="mono">p=0.4</span> means moderate susceptibility today—some failure-like signals (slope/rainfall) but below the typical triggering threshold. Under additional rainfall, it may cross into the watch/high zone.</li>
+      </ul>
     </div>
 
     <div class="card">

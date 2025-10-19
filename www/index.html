@@ -16,63 +16,6 @@
       padding: 8px 12px; border-radius: 8px; font: 14px/1.25 system-ui, sans-serif;
       box-shadow: 0 1px 4px rgba(0,0,0,.15); white-space: nowrap;
     }
-    /* Welcome screen */
-#welcomeOverlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: radial-gradient(circle at center, #ffffff 40%, #e7f1f9 100%);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 1200;
-  transition: opacity 0.8s ease, visibility 0.8s ease;
-}
-#welcomeOverlay.hidden {
-  opacity: 0;
-  visibility: hidden;
-}
-.welcome-box {
-  text-align: center;
-  background: rgba(255,255,255,0.96);
-  border-radius: 16px;
-  padding: 28px 38px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  color: #0b2239;
-  max-width: 500px;
-}
-.welcome-box h1 {
-  margin: 0 0 10px;
-  font-size: 1.9rem;
-  color: #0b6;
-}
-.welcome-box p {
-  margin: 6px 0;
-}
-.welcome-box .desc {
-  color: #333;
-  font-size: 0.95rem;
-  margin: 12px 0 20px;
-  line-height: 1.5;
-}
-#welcomeOverlay button {
-  font-size: 1rem;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  background: #0b6;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-#welcomeOverlay button:hover {
-  background: #099d60;
-}
-.muted {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-
     .subtitle { color:#444; margin-left:8px; font-weight:500; }
     .panel {
       position: absolute; z-index: 900; bottom: 16px; left: 12px;
@@ -83,7 +26,6 @@
     .swatch { width: 18px; height: 10px; display: inline-block; margin-right: 6px; vertical-align: -1px; }
     .slider { width: 220px; }
     .row { margin: 6px 0; }
-
     .about-btn, .runs-btn, .summary-btn {
       position: absolute; z-index: 910; top: 10px;
       background:#fff; border:1px solid #ccc; border-radius:8px; padding:6px 10px;
@@ -91,7 +33,7 @@
     }
     .about-btn { right: 12px; }
     .runs-btn { right: 92px; }
-    .summary-btn { right: 182px; }  /* Project Summary Button position */
+    .summary-btn { right: 182px; }
 
     .overlay {
       position: absolute; z-index: 905; top: 56px; right: 12px; max-width: 380px;
@@ -107,32 +49,69 @@
     .close-x:hover { background:#eee; }
     .row-inline { display:flex; gap:8px; align-items:center; }
     .select { font: 13px/1.2 system-ui, sans-serif; padding:4px 8px; }
+
+    /* Welcome screen with branding */
+    #welcomeOverlay {
+      position: fixed; inset: 0; z-index: 1200;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity .8s ease, visibility .8s ease;
+      background: rgba(0,0,0,0.25);
+    }
+    #welcomeOverlay::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.35)),
+        url('assets/welcome-bg.jpg') center/cover no-repeat;
+      filter: saturate(1.05) contrast(1.05);
+    }
+    #welcomeOverlay.hidden { opacity: 0; visibility: hidden; }
+    .welcome-box {
+      position: relative;
+      text-align: center;
+      background: rgba(255,255,255,0.96);
+      border-radius: 16px;
+      padding: 28px 38px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      color: #0b2239;
+      max-width: 560px;
+      backdrop-filter: blur(2px);
+    }
+    .welcome-box .logo {
+      width: 84px; height: 84px; object-fit: contain;
+      display:block; margin: 0 auto 12px; border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+    .welcome-box h1 { margin: 0 0 10px; font-size: 1.9rem; color: #0b6; }
+    .welcome-box p { margin: 6px 0; }
+    .welcome-box .desc { color: #233; font-size: .98rem; margin: 12px 0 20px; line-height: 1.5; }
+    #welcomeOverlay button {
+      font-size: 1rem; padding: 10px 20px; border: none; border-radius: 8px;
+      background: #0b6; color: #fff; cursor: pointer; transition: background .2s ease;
+    }
+    #welcomeOverlay button:hover { background: #099d60; }
+
+    /* Scrollable About */
+    #aboutBox { max-height: 70vh; overflow-y: auto; overscroll-behavior: contain; padding-right: 16px; }
   </style>
 </head>
 <body>
 <div id="map"></div>
+
 <!-- Welcome Screen -->
 <div id="welcomeOverlay">
   <div class="welcome-box">
+    <img class="logo" src="assets/logo.png" alt="Asheville Landslide Project logo" />
     <h1>Asheville Landslide Project</h1>
-    <p>
-      <b>Real-Time Prediction of Rainfall-Triggered Landslides</b><br>
-      <span class="muted">Buncombe County, North Carolina</span>
-    </p>
-    <p class="desc">
-      This platform combines rainfall, terrain, and soil data to predict slope failure probability
-      using machine learning. Explore live and historical predictions through interactive tools.
-    </p>
+    <p><b>Real-Time Prediction of Rainfall-Triggered Landslides</b><br><span class="muted">Buncombe County, North Carolina</span></p>
+    <p class="desc">This platform combines rainfall, terrain, and soil data to predict slope failure probability using machine learning. Explore live and historical predictions through interactive tools.</p>
     <button id="continueBtn">Continue</button>
   </div>
 </div>
 
-
-<!-- Project Summary Button -->
-<button id="summaryBtn" class="summary-btn" title="View project summary">Summary</button>
-
 <button id="runsBtn" class="runs-btn" aria-haspopup="dialog" aria-controls="runsBox">Runs</button>
 <button id="aboutBtn" class="about-btn" aria-haspopup="dialog" aria-controls="aboutBox">About</button>
+<button id="summaryBtn" class="summary-btn" title="View project summary">Summary</button>
 
 <div id="runsBox" class="overlay" role="dialog" aria-modal="false" aria-labelledby="runsTitle">
   <div><span id="runsClose" class="close-x" aria-label="Close">×</span></div>
@@ -145,8 +124,7 @@
   <p class="muted" id="runPaths"></p>
 </div>
 
-<div id="aboutBox" class="overlay" role="dialog" aria-modal="false" aria-labelledby="aboutTitle"
-     style="max-height: 70vh; overflow-y: auto; overscroll-behavior: contain; padding-right: 16px;">
+<div id="aboutBox" class="overlay" role="dialog" aria-modal="false" aria-labelledby="aboutTitle">
   <div><span id="aboutClose" class="close-x" aria-label="Close">×</span></div>
   <h3 id="aboutTitle">About this map</h3>
 
@@ -156,58 +134,29 @@
     It translates a machine-learning model into a live map that updates automatically
     using recent rainfall data from <b>PRISM</b> and static geospatial layers.
   </p>
-
   <p>
     Each grid cell represents a 40-meter pixel derived from <b>USGS elevation</b> data, combined with
     <b>slope</b> and <b>soil depth</b> from the <b>NRCS SSURGO</b> database.
-    The model also incorporates <b>short- and long-term rainfall windows</b>:
-    daily precipitation sums (1-day, 3-day, 7-day, 30-day)
-    and rolling maximums (Max 3-day, Max 30-day).
-    These predictors are refreshed each day to estimate the probability that a cell
-    is susceptible to slope failure.
+    The model incorporates rainfall windows: <b>R1d, R3d, R7d, R30d</b> and rolling maxima <b>Max 3-day</b>, <b>Max 30-day</b>.
   </p>
-
   <p>
-    Three machine-learning models were trained and compared — <b>Logistic Regression</b>,
-    <b>Random Forest</b>, and <b>XGBoost</b> — using 302 mapped landslides (1981–2024)
-    and 302 matched control points. The <b>Random Forest</b> model achieved the most consistent
-    accuracy (<b>AUC ≈ 0.89</b>), demonstrating strong ability to capture nonlinear
-    rainfall-terrain interactions while maintaining generalization.
+    We trained Logistic Regression, <b>Random Forest</b>, and XGBoost using 302 mapped landslides (1981–2024) and
+    matched controls. Random Forest delivered strong performance (AUC ≈ 0.89), capturing nonlinear rainfall–terrain effects.
   </p>
-
   <p>
-    Key findings show that <b>slope steepness</b> is the strongest predictor of landslide likelihood,
-    while <b>short-term rainfall extremes</b> (1–7 day and 3-day maxima) sharply increase hazard.
-    In contrast, <b>longer 30-day accumulations</b> often act as a background saturation factor,
-    not an immediate trigger.
-  </p>
-
-  <p>
-    The visualization allows you to:
+    Key findings: <b>slope</b> is the most predictive static driver; <b>short-term rainfall</b> bursts (1–7 days, 3-day maxima)
+    elevate risk; longer 30-day accumulation often reflects background wetness rather than immediate triggering.
   </p>
   <ul>
-    <li><b>View real-time predictions</b> from the latest daily model run.</li>
-    <li><b>Adjust the probability threshold</b> to reveal only higher-risk cells.</li>
-    <li><b>Explore historical predictions</b> through the “Runs” panel, viewing previous rainfall conditions and risk distributions.</li>
-    <li><b>Access metadata</b> and downloadable datasets under <code>/predictions/historicData/YYYY/MM/</code>.</li>
+    <li><b>Latest predictions</b> from the daily run.</li>
+    <li><b>Threshold slider</b> to filter higher-risk cells.</li>
+    <li><b>Historical runs</b> via the “Runs” picker, backed by <code>/predictions/index.json</code>.</li>
+    <li>Per-run artifacts under <code>/predictions/historicData/YYYY/MM/</code> (GeoJSON, Parquet, meta).</li>
   </ul>
 
-  <p>
-    Together, this map and its data provide a foundation for <b>community resilience</b> —
-    enabling researchers, emergency managers, and residents to visualize how changing rainfall
-    patterns influence slope instability across the Blue Ridge Mountains.
-  </p>
-
-  <p class="muted" id="aboutMeta">
-    Latest run: — · model: Random Forest · prob: p_rf · rows: —
-  </p>
-  <p class="muted">
-    Data endpoints: <code>/api/latest</code>, <code>/predictions/latest.geojson</code>,
-    <code>/predictions/index.json</code>
-  </p>
+  <p class="muted" id="aboutMeta">Latest run: — · model: Random Forest · prob: p_rf · rows: —</p>
+  <p class="muted">Data endpoints: <code>/predictions/latest.json</code>, <code>/predictions/latest.geojson</code>, <code>/predictions/index.json</code></p>
 </div>
-
-
 
 <div class="topbar" id="topbar">
   Loading… <span class="subtitle" id="subtitle"></span>
@@ -221,12 +170,6 @@
 
 <script>
 (async function () {
-    // --- Manual Welcome overlay ---
-  const welcome = document.getElementById('welcomeOverlay');
-  const continueBtn = document.getElementById('continueBtn');
-  continueBtn.addEventListener('click', () => {
-    welcome.classList.add('hidden');
-  });
   const top = document.getElementById('topbar');
   const subtitle = document.getElementById('subtitle');
   const th = document.getElementById('th');
@@ -236,13 +179,14 @@
   const aboutBtn = document.getElementById('aboutBtn');
   const aboutBox = document.getElementById('aboutBox');
   const aboutClose = document.getElementById('aboutClose');
-  const aboutMeta = document.getElementById('aboutMeta');
   const runsBtn = document.getElementById('runsBtn');
   const runsBox = document.getElementById('runsBox');
   const runsClose = document.getElementById('runsClose');
   const runSelect = document.getElementById('runSelect');
   const runCount = document.getElementById('runCount');
   const runPaths = document.getElementById('runPaths');
+  const welcome = document.getElementById('welcomeOverlay');
+  const continueBtn = document.getElementById('continueBtn');
 
   let map, layer, features = [], probCol = 'p_rf';
   let manifest = { runs: [], latest: null };
@@ -251,11 +195,11 @@
   function show(el, show){ el.style.display = show ? 'block' : 'none'; }
   function toggle(el){ show(el, el.style.display !== 'block'); }
 
-  // New: link to your project summary page
-  summaryBtn.addEventListener('click', () => {
-    window.open('project-summary.html', '_blank'); // open in new tab
-  });
+  // Welcome dismiss
+  continueBtn.addEventListener('click', () => { welcome.classList.add('hidden'); });
 
+  // Buttons
+  summaryBtn.addEventListener('click', () => { window.open('project-summary.html', '_blank'); });
   aboutBtn.addEventListener('click', () => toggle(aboutBox));
   aboutClose.addEventListener('click', () => show(aboutBox, false));
   runsBtn.addEventListener('click', () => toggle(runsBox));
@@ -267,7 +211,7 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
   } catch (e) { console.error('Leaflet init error:', e); setTop('Error: could not initialize map.'); return; }
 
-  // UI event stop fix
+  // Stop map from hijacking UI
   const panelEl = document.getElementById('panel');
   L.DomEvent.disableClickPropagation(panelEl);
   L.DomEvent.disableScrollPropagation(panelEl);
@@ -294,7 +238,7 @@
     const model = modelKey || 'Random Forest';
     setTop(`Run: ${date}`);
     subtitle.textContent = `model=${model} · prob_col=${probCol} · rows=${rows}`;
-    aboutMeta.textContent = `Run: ${date} · model: ${model} · prob: ${probCol} · rows=${rows}`;
+    document.getElementById('aboutMeta').textContent = `Latest run: ${date} · model: ${model} · prob: ${probCol} · rows: ${rows}`;
   }
 
   const stops = [[0.2,0.4,0.8],[0.1,0.7,0.7],[0.3,0.8,0.4],[0.9,0.9,0.2],[0.98,0.6,0.2],[0.8,0.1,0.1]];

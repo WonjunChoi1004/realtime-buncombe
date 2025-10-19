@@ -11,3 +11,4 @@ uvicorn
 pyarrow
 matplotlib
 requests
+apscheduler
