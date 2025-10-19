@@ -11,7 +11,13 @@
       "geojson": "predictions/historicData/2025/10/map_2025-10-17.geojson",
       "parquet": "predictions/historicData/2025/10/predictions_2025-10-17.parquet",
       "meta": "predictions/historicData/2025/10/meta_2025-10-17.json"
+    },
+    {
+      "date": "2025-10-16",
+      "geojson": "predictions/historicData/2025/10/map_2025-10-16.geojson",
+      "parquet": "predictions/historicData/2025/10/predictions_2025-10-16.parquet",
+      "meta": "predictions/historicData/2025/10/meta_2025-10-16.json"
     }
   ],
-  "latest": "2025-10-17"
+  "latest": "2025-10-16"
 }
