@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 """Generate landslide probability predictions on the rainfall grid with dated archives and web-ready artifacts."""
 """cd /Users/wonjunchoi/PycharmProjects/realtime-buncombe/app
 python predict_daily_triple.py 2025-10-19
-
 """
-
-from __future__ import annotations
 
 import datetime as dt
 import json

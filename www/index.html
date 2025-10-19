@@ -27,13 +27,14 @@
     .slider { width: 220px; }
     .row { margin: 6px 0; }
 
-    .about-btn, .runs-btn {
+    .about-btn, .runs-btn, .summary-btn {
       position: absolute; z-index: 910; top: 10px;
       background:#fff; border:1px solid #ccc; border-radius:8px; padding:6px 10px;
       font: 13px/1 system-ui, sans-serif; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.12);
     }
     .about-btn { right: 12px; }
     .runs-btn { right: 92px; }
+    .summary-btn { right: 182px; }  /* Project Summary Button position */
 
     .overlay {
       position: absolute; z-index: 905; top: 56px; right: 12px; max-width: 380px;
@@ -53,6 +54,9 @@
 </head>
 <body>
 <div id="map"></div>
+
+<!-- Project Summary Button -->
+<button id="summaryBtn" class="summary-btn" title="View project summary">Summary</button>
 
 <button id="runsBtn" class="runs-btn" aria-haspopup="dialog" aria-controls="runsBox">Runs</button>
 <button id="aboutBtn" class="about-btn" aria-haspopup="dialog" aria-controls="aboutBox">About</button>
@@ -81,7 +85,7 @@
   </p>
   <p class="muted" id="aboutMeta">Latest run: — · model: Random Forest · prob: p_rf · rows: —</p>
   <p class="muted">
-    Data: <code class="mono">/predictions/index.json</code> (manifest), <code class="mono">/predictions/latest.geojson</code>, <code class="mono">/predictions/latest.json</code>
+    Data: <code class="mono">/predictions/index.json</code>, <code class="mono">/predictions/latest.geojson</code>
   </p>
 </div>
 
@@ -102,11 +106,11 @@
   const th = document.getElementById('th');
   const thv = document.getElementById('thv');
   const legendDiv = document.getElementById('legend');
+  const summaryBtn = document.getElementById('summaryBtn');
   const aboutBtn = document.getElementById('aboutBtn');
   const aboutBox = document.getElementById('aboutBox');
   const aboutClose = document.getElementById('aboutClose');
   const aboutMeta = document.getElementById('aboutMeta');
-
   const runsBtn = document.getElementById('runsBtn');
   const runsBox = document.getElementById('runsBox');
   const runsClose = document.getElementById('runsClose');
@@ -120,6 +124,12 @@
   function setTop(msg){ top.firstChild.nodeValue = msg + ' '; }
   function show(el, show){ el.style.display = show ? 'block' : 'none'; }
   function toggle(el){ show(el, el.style.display !== 'block'); }
+
+  // New: link to your project summary page
+  summaryBtn.addEventListener('click', () => {
+    window.open('/project-summary.html', '_blank'); // open in new tab
+  });
+
   aboutBtn.addEventListener('click', () => toggle(aboutBox));
   aboutClose.addEventListener('click', () => show(aboutBox, false));
   runsBtn.addEventListener('click', () => toggle(runsBox));
@@ -130,6 +140,21 @@
     map = L.map('map', { preferCanvas: true }).setView([35.6, -82.5], 10);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
   } catch (e) { console.error('Leaflet init error:', e); setTop('Error: could not initialize map.'); return; }
+
+  // UI event stop fix
+  const panelEl = document.getElementById('panel');
+  L.DomEvent.disableClickPropagation(panelEl);
+  L.DomEvent.disableScrollPropagation(panelEl);
+  ['aboutBox','runsBox','topbar'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      L.DomEvent.disableClickPropagation(el);
+      L.DomEvent.disableScrollPropagation(el);
+    }
+  });
+  ['mousedown','touchstart','pointerdown'].forEach(ev => {
+    th.addEventListener(ev, e => e.stopPropagation(), { passive: true });
+  });
 
   async function getJSON(url) {
     const r = await fetch(url, { cache: 'no-store' });
@@ -146,157 +171,59 @@
     aboutMeta.textContent = `Run: ${date} · model: ${model} · prob: ${probCol} · rows=${rows}`;
   }
 
-  const stops = [
-    [0.2, 0.4, 0.8],
-    [0.1, 0.7, 0.7],
-    [0.3, 0.8, 0.4],
-    [0.9, 0.9, 0.2],
-    [0.98, 0.6, 0.2],
-    [0.8, 0.1, 0.1],
-  ];
+  const stops = [[0.2,0.4,0.8],[0.1,0.7,0.7],[0.3,0.8,0.4],[0.9,0.9,0.2],[0.98,0.6,0.2],[0.8,0.1,0.1]];
   function lerp(a,b,t){ return a + (b-a)*t; }
-  function colorScale(vMin, vMax) {
-    return function(p){
-      if (!Number.isFinite(p)) return '#999';
-      const t = (p - vMin) / Math.max(1e-9, (vMax - vMin));
-      const x = Math.max(0, Math.min(1, t)) * (stops.length - 1);
-      const i = Math.floor(x), f = x - i;
-      const c0 = stops[i|0], c1 = stops[Math.min(i+1, stops.length-1)];
-      const r = Math.round(lerp(c0[0], c1[0], f)*255);
-      const g = Math.round(lerp(c0[1], c1[1], f)*255);
-      const b = Math.round(lerp(c0[2], c1[2], f)*255);
-      return `rgb(${r},${g},${b})`;
-    }
-  }
+  function colorScale(vMin, vMax){return p=>{
+    if(!Number.isFinite(p))return'#999';
+    const t=(p-vMin)/Math.max(1e-9,(vMax-vMin));
+    const x=Math.max(0,Math.min(1,t))*(stops.length-1);
+    const i=Math.floor(x),f=x-i;
+    const c0=stops[i|0],c1=stops[Math.min(i+1,stops.length-1)];
+    const r=Math.round(lerp(c0[0],c1[0],f)*255);
+    const g=Math.round(lerp(c0[1],c1[1],f)*255);
+    const b=Math.round(lerp(c0[2],c1[2],f)*255);
+    return`rgb(${r},${g},${b})`;
+  }}
+  function renderLegend(vMin,vMax){const n=6,bins=[];for(let i=0;i<n;i++)bins.push(vMin+(i/(n-1))*(vMax-vMin));
+    const getColor=colorScale(vMin,vMax);
+    let html=`<b>${probCol}</b> (${vMin.toFixed(2)}–${vMax.toFixed(2)})<br>`;
+    for(let i=0;i<bins.length-1;i++){const mid=(bins[i]+bins[i+1])/2;
+      html+=`<span class="swatch" style="background:${getColor(mid)}"></span>${bins[i].toFixed(2)}–${bins[i+1].toFixed(2)}<br>`;}
+    legendDiv.innerHTML=html;}
+  const rainKeys=['R1d','R3d','R7d','R30d','Max_Rainfall_3day','Max_Rainfall_30day'];
+  function propsPopup(p,probKey){const pv=Number(p[probKey]);
+    let s=`${probKey}: ${Number.isFinite(pv)?pv.toFixed(3):'n/a'}`;
+    for(const k of rainKeys)if(k in p)s+=`<br>${k}: ${Number(p[k]??0).toFixed(1)}`;
+    if('row'in p&&'col'in p)s+=`<br>row: ${p.row} · col: ${p.col}`;return s;}
+  function drawLayer(th,vMin,vMax){if(layer)map.removeLayer(layer);const getColor=colorScale(vMin,vMax);
+    layer=L.geoJSON({type:'FeatureCollection',features:features.filter(f=>Number(f.properties[probCol])>=th)},{
+      pointToLayer:(f,latlng)=>{const p=Number(f.properties[probCol]);
+        return L.circleMarker(latlng,{renderer:map.getRenderer(map),radius:3.2,fillColor:getColor(p),color:'#000',weight:0.2,opacity:0.9,fillOpacity:0.85})
+        .bindPopup(propsPopup(f.properties,probCol));}}).addTo(map);
+    try{const b=layer.getBounds();if(b.isValid())map.fitBounds(b.pad(0.05),{animate:false});}catch(_){}}
+  function recomputeAndRedraw(){const vals=features.map(f=>Number(f.properties[probCol])).filter(Number.isFinite);
+    let vMin=Math.min(...vals),vMax=Math.max(...vals);
+    if(!Number.isFinite(vMin)||!Number.isFinite(vMax)||vMax<=vMin){vMin=0;vMax=1;}
+    th.min=vMin.toFixed(2);th.max=vMax.toFixed(2);
+    const cur=Number(th.value);if(!Number.isFinite(cur)||cur<vMin||cur>vMax){th.value=(vMin+0.1*(vMax-vMin)).toFixed(2);}
+    thv.textContent=Number(th.value).toFixed(2);renderLegend(vMin,vMax);drawLayer(Number(th.value),vMin,vMax);}
+  let debounce=null;th.addEventListener('input',()=>{thv.textContent=Number(th.value).toFixed(2);clearTimeout(debounce);debounce=setTimeout(()=>recomputeAndRedraw(),80);});
 
-  function renderLegend(vMin, vMax) {
-    const n = 6, bins = [];
-    for (let i=0;i<n;i++) bins.push(vMin + (i/(n-1))*(vMax - vMin));
-    const getColor = colorScale(vMin, vMax);
-    let html = `<b>${probCol}</b> (${vMin.toFixed(2)}–${vMax.toFixed(2)})<br>`;
-    for (let i=0;i<bins.length-1;i++){
-      const mid = (bins[i] + bins[i+1]) / 2;
-      html += `<span class="swatch" style="background:${getColor(mid)}"></span>${bins[i].toFixed(2)}–${bins[i+1].toFixed(2)}<br>`;
-    }
-    legendDiv.innerHTML = html;
-  }
-
-  const rainKeys = ['R1d','R3d','R7d','R30d','Max_Rainfall_3day','Max_Rainfall_30day'];
-  function propsPopup(p, probKey) {
-    const pv = Number(p[probKey]);
-    let s = `${probKey}: ${Number.isFinite(pv) ? pv.toFixed(3) : 'n/a'}`;
-    for (const k of rainKeys) if (k in p) s += `<br>${k}: ${Number(p[k] ?? 0).toFixed(1)}`;
-    if ('row' in p && 'col' in p) s += `<br>row: ${p.row} · col: ${p.col}`;
-    return s;
-  }
-
-  function drawLayer(threshold, vMin, vMax) {
-    if (layer) map.removeLayer(layer);
-    const getColor = colorScale(vMin, vMax);
-    layer = L.geoJSON({
-      type: 'FeatureCollection',
-      features: features.filter(f => Number(f.properties[probCol]) >= threshold)
-    }, {
-      pointToLayer: (f, latlng) => {
-        const p = Number(f.properties[probCol]);
-        return L.circleMarker(latlng, {
-          renderer: map.getRenderer(map), radius: 3.2,
-          fillColor: getColor(p), color: '#000', weight: 0.2,
-          opacity: 0.9, fillOpacity: 0.85
-        }).bindPopup(propsPopup(f.properties, probCol));
-      }
-    }).addTo(map);
-    try { const b = layer.getBounds(); if (b.isValid()) map.fitBounds(b.pad(0.05), { animate: false }); } catch(_) {}
-  }
-
-  function recomputeAndRedraw() {
-    const vals = features.map(f => Number(f.properties[probCol])).filter(Number.isFinite);
-    const dataMin = Math.min(...vals), dataMax = Math.max(...vals);
-    const vMin = Number.isFinite(dataMin) ? dataMin : 0;
-    const vMax = Number.isFinite(dataMax) ? dataMax : 1;
-    th.min = vMin.toFixed(2); th.max = vMax.toFixed(2);
-    if (vMax - vMin > 0.2) th.value = (vMin + 0.1*(vMax - vMin)).toFixed(2);
-    thv.textContent = Number(th.value).toFixed(2);
-    renderLegend(vMin, vMax);
-    drawLayer(Number(th.value), vMin, vMax);
-  }
-
-  let debounce = null;
-  th.addEventListener('input', () => {
-    thv.textContent = Number(th.value).toFixed(2);
-    clearTimeout(debounce);
-    debounce = setTimeout(() => recomputeAndRedraw(), 80);
-  });
-
-  async function loadLatest() {
-    try {
-      const metaLatest = await getJSON('/predictions/latest.json');
-      probCol = metaLatest.prob_col || 'p_rf';
-      setSubtitle(metaLatest);
-    } catch (e) {
-      console.warn('latest.json missing, falling back to /api/latest', e);
-      try {
-        const apiMeta = await getJSON('/api/latest');
-        probCol = apiMeta.prob_col || 'p_rf';
-        setSubtitle(apiMeta);
-      } catch (err) {
-        console.error('Meta error:', err);
-        setTop('Latest info unavailable');
-        subtitle.textContent = '';
-      }
-    }
-    const geo = await getJSON('/predictions/latest.geojson');
-    features = (geo.features || []).filter(f => f && f.properties);
-    recomputeAndRedraw();
-    runPaths.innerHTML = `<span class="muted">GeoJSON:</span> <code class="mono">/predictions/latest.geojson</code>`;
-  }
-
-  async function loadByDate(dateStr) {
-    const rec = (manifest.runs || []).find(r => r.date === dateStr);
-    if (!rec) throw new Error(`Run not found: ${dateStr}`);
-    const meta = await getJSON('/' + rec.meta);
-    probCol = (meta.prob_col || 'p_rf');
-    setSubtitle(meta);
-    const geo = await getJSON('/' + rec.geojson);
-    features = (geo.features || []).filter(f => f && f.properties);
-    recomputeAndRedraw();
-    runPaths.innerHTML = `<span class="muted">GeoJSON:</span> <code class="mono">/${rec.geojson}</code><br><span class="muted">Parquet:</span> <code class="mono">/${rec.parquet}</code>`;
-  }
-
-  function populateRuns() {
-    runSelect.innerHTML = '';
-    const optLatest = document.createElement('option');
-    optLatest.value = '__latest__'; optLatest.textContent = 'Latest';
-    runSelect.appendChild(optLatest);
-    for (const r of (manifest.runs || [])) {
-      const o = document.createElement('option');
-      o.value = r.date; o.textContent = r.date;
-      runSelect.appendChild(o);
-    }
-    runCount.textContent = `${(manifest.runs||[]).length} archived`;
-    runSelect.value = '__latest__';
-  }
-
-  runSelect.addEventListener('change', async (e) => {
-    const v = e.target.value;
-    try {
-      setTop('Loading…');
-      if (v === '__latest__') await loadLatest();
-      else await loadByDate(v);
-    } catch (err) {
-      console.error(err);
-      setTop('Load error');
-    }
-  });
-
-  try {
-    manifest = await getJSON('/predictions/index.json');
-  } catch (e) {
-    console.warn('index.json missing; only Latest is available.', e);
-    manifest = { runs: [], latest: null };
-  }
-  populateRuns();
-  await loadLatest();
+  async function loadLatest(){try{const meta=await getJSON('/predictions/latest.json');probCol=meta.prob_col||'p_rf';setSubtitle(meta);}
+    catch(e){console.warn('latest.json missing');}const geo=await getJSON('/predictions/latest.geojson');
+    features=(geo.features||[]).filter(f=>f&&f.properties);recomputeAndRedraw();
+    runPaths.innerHTML=`<span class="muted">GeoJSON:</span> <code class="mono">/predictions/latest.geojson</code>`;}
+  async function loadByDate(dateStr){const rec=(manifest.runs||[]).find(r=>r.date===dateStr);
+    if(!rec)throw new Error(`Run not found: ${dateStr}`);const meta=await getJSON('/'+rec.meta);probCol=(meta.prob_col||'p_rf');
+    setSubtitle(meta);const geo=await getJSON('/'+rec.geojson);features=(geo.features||[]).filter(f=>f&&f.properties);
+    recomputeAndRedraw();runPaths.innerHTML=`<span class="muted">GeoJSON:</span> <code class="mono">/${rec.geojson}</code><br><span class="muted">Parquet:</span> <code class="mono">/${rec.parquet}</code>`;}
+  function populateRuns(){runSelect.innerHTML='';const optL=document.createElement('option');
+    optL.value='__latest__';optL.textContent='Latest';runSelect.appendChild(optL);
+    for(const r of(manifest.runs||[])){const o=document.createElement('option');o.value=r.date;o.textContent=r.date;runSelect.appendChild(o);}
+    runCount.textContent=`${(manifest.runs||[]).length} archived`;runSelect.value='__latest__';}
+  runSelect.addEventListener('change',async e=>{const v=e.target.value;try{setTop('Loading…');if(v==='__latest__')await loadLatest();else await loadByDate(v);}catch(err){console.error(err);setTop('Load error');}});
+  try{manifest=await getJSON('/predictions/index.json');}catch(e){console.warn('index.json missing');manifest={runs:[],latest:null};}
+  populateRuns();await loadLatest();
 })();
 </script>
 </body>
