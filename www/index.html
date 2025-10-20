@@ -19,17 +19,19 @@
     .subtitle { color:#444; margin-left:8px; font-weight:500; }
     .panel {
       position: absolute; z-index: 900; bottom: 16px; left: 12px;
-      background: rgba(255,255,255,0.92); padding: 8px 10px; border-radius: 8px;
-      font: 12px/1.25 system-ui, sans-serif; box-shadow: 0 1px 4px rgba(0,0,0,.15);
+      background: rgba(255,255,255,0.92); padding: 10px 12px; border-radius: 10px;
+      font: 12px/1.25 system-ui, sans-serif; box-shadow: 0 1px 4px rgba(0,0,0,.15); min-width: 280px;
     }
     .legend { margin-top: 8px; }
     .swatch { width: 18px; height: 10px; display: inline-block; margin-right: 6px; vertical-align: -1px; }
-    .slider { width: 220px; }
-    .row { margin: 6px 0; }
+    .slider { width: 100%; }
+    .row { margin: 8px 0; display:flex; align-items:center; gap:8px; }
+    .row label { white-space:nowrap; }
+    .btn { background:#fff; border:1px solid #ccc; border-radius:8px; padding:6px 10px; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.12); }
     .about-btn, .runs-btn, .summary-btn {
       position: absolute; z-index: 910; top: 10px;
       background:#fff; border:1px solid #ccc; border-radius:8px; padding:6px 10px;
-      font: 13px/1 system-ui, sans-serif; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.12);
+      font: 13px/1 system-ui, sans-serif; cursor:pointer; box-shadow: 0 1px 4px rgba(0,0,0,.12);
     }
     .about-btn { right: 12px; }
     .runs-btn { right: 92px; }
@@ -51,30 +53,24 @@
     .select { font: 13px/1.2 system-ui, sans-serif; padding:4px 8px; }
 
     /* Welcome */
-    #welcomeOverlay {
-      position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center;
-      transition: opacity .8s ease, visibility .8s ease; background: rgba(0,0,0,0.25);
-    }
-    #welcomeOverlay::before {
-      content: ""; position: absolute; inset: 0;
-      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.35)), url('assets/welcome-bg.jpg') center/cover no-repeat;
-      filter: saturate(1.05) contrast(1.05);
-    }
+    #welcomeOverlay { position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center;
+      transition: opacity .8s ease, visibility .8s ease; background: rgba(0,0,0,0.25); }
+    #welcomeOverlay::before { content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.35)), url('assets/welcome-bg.jpg') center/cover no-repeat; }
     #welcomeOverlay.hidden { opacity: 0; visibility: hidden; }
-    .welcome-box {
-      position: relative; text-align: center; background: rgba(255,255,255,0.96);
+    .welcome-box { position: relative; text-align: center; background: rgba(255,255,255,0.96);
       border-radius: 16px; padding: 28px 38px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      color: #0b2239; max-width: 560px; backdrop-filter: blur(2px);
-    }
+      color: #0b2239; max-width: 560px; backdrop-filter: blur(2px); }
     .welcome-box .logo { width: 84px; height: 84px; object-fit: contain; display:block; margin: 0 auto 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
     .welcome-box h1 { margin: 0 0 10px; font-size: 1.9rem; color: #0b6; }
     .welcome-box p { margin: 6px 0; }
     .welcome-box .desc { color: #233; font-size: .98rem; margin: 12px 0 20px; line-height: 1.5; }
-    #welcomeOverlay button { font-size: 1rem; padding: 10px 20px; border: none; border-radius: 8px; background: #0b6; color: #fff; cursor: pointer; transition: background .2s ease; }
+    #welcomeOverlay button { font-size: 1rem; padding: 10px 20px; border: none; border-radius: 8px; background: #0b6; color: #fff; cursor: pointer; }
     #welcomeOverlay button:hover { background: #099d60; }
 
     /* Scrollable About */
     #aboutBox { max-height: 70vh; overflow-y: auto; overscroll-behavior: contain; padding-right: 16px; }
+    .toggle { display:inline-flex; align-items:center; gap:6px; cursor:pointer; }
   </style>
 </head>
 <body>
@@ -148,9 +144,23 @@
 </div>
 
 <div class="panel" id="panel">
-  <div class="row"><b>Threshold</b> p ≥ <span id="thv">0.00</span></div>
+  <div class="row"><label><b>Threshold</b></label> p ≥ <span id="thv">0.00</span></div>
   <input id="th" class="slider" type="range" min="0" max="1" step="0.01" value="0" />
   <div class="legend" id="legend"></div>
+
+  <hr style="border:none;border-top:1px solid #ddd;margin:10px 0">
+
+  <div class="row" style="justify-content:space-between;">
+    <label><b>Date</b> <span id="dateLabel" class="mono muted">—</span></label>
+    <label class="toggle" title="Loop autoplay"><input id="loopToggle" type="checkbox" checked>Loop</label>
+  </div>
+  <div class="row" style="gap:6px;">
+    <button id="prevDate" class="btn" title="Previous day">◀</button>
+    <input id="dateSlider" class="slider" type="range" min="0" max="0" step="1" value="0" />
+    <button id="nextDate" class="btn" title="Next day">▶</button>
+    <button id="playBtn" class="btn" title="Play/Pause">▶</button>
+    <button id="fitBtn" class="btn" title="Fit to current points">Fit</button>
+  </div>
 </div>
 
 <script>
@@ -173,13 +183,28 @@
   const welcome = document.getElementById('welcomeOverlay');
   const continueBtn = document.getElementById('continueBtn');
 
-  // Fixed probability domain
+  const dateSlider = document.getElementById('dateSlider');
+  const dateLabel = document.getElementById('dateLabel');
+  const prevDateBtn = document.getElementById('prevDate');
+  const nextDateBtn = document.getElementById('nextDate');
+  const playBtn = document.getElementById('playBtn');
+  const loopToggle = document.getElementById('loopToggle');
+  const fitBtn = document.getElementById('fitBtn');
+
   const USE_FIXED_DOMAIN = true;
-  const DOMAIN_MIN = 0.40;
+  const DOMAIN_MIN = 0.00;
   const DOMAIN_MAX = 1.00;
+  const LEGEND_BREAKS = [0.00, 0.40, 0.60, 0.70, 0.80, 0.90, 1.00];
+
+  // Autoplay config
+  const AUTOPLAY_MS = 900; // step interval
+  let playTimer = null;
+  let isPlaying = false;
 
   let map, layer, features = [], probCol = 'p_rf';
   let manifest = { runs: [], latest: null };
+  let dateList = []; // chronological: left = oldest, right = newest
+  let currentDate = null;
 
   function setTop(msg){ top.firstChild.nodeValue = msg + ' '; }
   function show(el, show){ el.style.display = show ? 'block' : 'none'; }
@@ -192,14 +217,18 @@
   aboutClose.addEventListener('click', () => show(aboutBox, false));
   runsBtn.addEventListener('click', () => toggle(runsBox));
   runsClose.addEventListener('click', () => show(runsBox, false));
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') { show(aboutBox, false); show(runsBox, false); }});
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { show(aboutBox, false); show(runsBox, false); }
+    if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+    if (e.key === 'ArrowLeft') stepDate(-1);
+    if (e.key === 'ArrowRight') stepDate(1);
+  });
 
   try {
     map = L.map('map', { preferCanvas: true }).setView([35.6, -82.5], 10);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
   } catch (e) { console.error('Leaflet init error:', e); setTop('Error: could not initialize map.'); return; }
 
-  // Keep UI interactive over the map
   const panelEl = document.getElementById('panel');
   L.DomEvent.disableClickPropagation(panelEl);
   L.DomEvent.disableScrollPropagation(panelEl);
@@ -212,6 +241,7 @@
   });
   ['mousedown','touchstart','pointerdown'].forEach(ev => {
     th.addEventListener(ev, e => e.stopPropagation(), { passive: true });
+    dateSlider.addEventListener(ev, e => e.stopPropagation(), { passive: true });
   });
 
   async function getJSON(url) {
@@ -229,29 +259,45 @@
     document.getElementById('aboutMeta').textContent = `Latest run: ${date} · model: ${model} · prob: ${probCol} · rows: ${rows}`;
   }
 
+  // Colors across custom bins
   const stops = [[0.2,0.4,0.8],[0.1,0.7,0.7],[0.3,0.8,0.4],[0.9,0.9,0.2],[0.98,0.6,0.2],[0.8,0.1,0.1]];
   function lerp(a,b,t){ return a + (b-a)*t; }
-  function colorScale(vMin, vMax){return p=>{
-    if(!Number.isFinite(p))return'#999';
-    const t=(p-vMin)/Math.max(1e-9,(vMax-vMin));
-    const x=Math.max(0,Math.min(1,t))*(stops.length-1);
-    const i=Math.floor(x),f=x-i;
-    const c0=stops[i|0],c1=stops[Math.min(i+1,stops.length-1)];
-    const r=Math.round(lerp(c0[0],c1[0],f)*255);
-    const g=Math.round(lerp(c0[1],c1[1],f)*255);
-    const b=Math.round(lerp(c0[2],c1[2],f)*255);
-    return`rgb(${r},${g},${b})`;
-  }}
-  function renderLegend(vMin,vMax){
-    const n=6,bins=[];for(let i=0;i<n;i++)bins.push(vMin+(i/(n-1))*(vMax-vMin));
-    const getColor=colorScale(vMin,vMax);
-    let html=`<b>${probCol}</b> (${vMin.toFixed(2)}–${vMax.toFixed(2)})<br>`;
-    for(let i=0;i<bins.length-1;i++){
-      const mid=(bins[i]+bins[i+1])/2;
-      html+=`<span class="swatch" style="background:${getColor(mid)}"></span>${bins[i].toFixed(2)}–${bins[i+1].toFixed(2)}<br>`;
+  function piecewiseT(p, breaks){
+    const n = breaks.length - 1;
+    if (p <= breaks[0]) return 0;
+    if (p >= breaks[breaks.length-1]) return 1;
+    for (let i=0;i<n;i++){
+      const a = breaks[i], b = breaks[i+1];
+      if (p <= b) {
+        const local = (p - a) / Math.max(1e-9, (b - a));
+        return (i + local) / n;
+      }
     }
-    legendDiv.innerHTML=html;
+    return 1;
   }
+  function colorScalePiecewise(breaks){
+    return p=>{
+      if(!Number.isFinite(p))return'#999';
+      const t = piecewiseT(p, breaks) * (stops.length - 1);
+      const i = Math.floor(t), f = t - i;
+      const c0 = stops[i|0], c1 = stops[Math.min(i+1, stops.length-1)];
+      const r = Math.round(lerp(c0[0], c1[0], f)*255);
+      const g = Math.round(lerp(c0[1], c1[1], f)*255);
+      const b = Math.round(lerp(c0[2], c1[2], f)*255);
+      return `rgb(${r},${g},${b})`;
+    }
+  }
+  function renderLegendWithBreaks(breaks){
+    const getColor = colorScalePiecewise(breaks);
+    let html = `<b>${probCol}</b> (custom bins)<br>`;
+    for(let i=0;i<breaks.length-1;i++){
+      const a = breaks[i], b = breaks[i+1];
+      const mid = (a+b)/2;
+      html += `<span class="swatch" style="background:${getColor(mid)}"></span>${a.toFixed(2)}–${b.toFixed(2)}<br>`;
+    }
+    legendDiv.innerHTML = html;
+  }
+
   const rainKeys=['R1d','R3d','R7d','R30d','Max_Rainfall_3day','Max_Rainfall_30day'];
   function propsPopup(p,probKey){
     const pv=Number(p[probKey]);
@@ -260,9 +306,11 @@
     if('row'in p&&'col'in p)s+=`<br>row: ${p.row} · col: ${p.col}`;
     return s;
   }
-  function drawLayer(threshold,vMin,vMax){
+
+  // No auto-zoom on threshold/date change. Use "Fit" to frame.
+  function drawLayer(threshold, breaks){
     if(layer)map.removeLayer(layer);
-    const getColor=colorScale(vMin,vMax);
+    const getColor=colorScalePiecewise(breaks);
     layer=L.geoJSON(
       {type:'FeatureCollection',features:features.filter(f=>Number(f.properties[probCol])>=threshold)},
       {
@@ -275,33 +323,25 @@
         }
       }
     ).addTo(map);
+  }
+
+  function fitToLayer(){
     try{
+      if(!layer) return;
       const b=layer.getBounds();
-      if(b.isValid())map.fitBounds(b.pad(0.05),{animate:false});
+      if(b && b.isValid()) map.fitBounds(b.pad(0.05),{animate:false});
     }catch(_){}
   }
 
   function recomputeAndRedraw(){
-    // Data-driven min/max kept for fallback; fixed domain used by default
-    const vals=features.map(f=>Number(f.properties[probCol])).filter(Number.isFinite);
-    let dataMin=Math.min(...vals), dataMax=Math.max(...vals);
-    if(!Number.isFinite(dataMin)||!Number.isFinite(dataMax)||dataMax<=dataMin){dataMin=0;dataMax=1;}
-
-    const vMin = USE_FIXED_DOMAIN ? DOMAIN_MIN : dataMin;
-    const vMax = USE_FIXED_DOMAIN ? DOMAIN_MAX : dataMax;
-
-    th.min=vMin.toFixed(2);
-    th.max=vMax.toFixed(2);
-    th.step='0.01';
-
+    const vMin = USE_FIXED_DOMAIN ? DOMAIN_MIN : 0;
+    const vMax = USE_FIXED_DOMAIN ? DOMAIN_MAX : 1;
+    th.min=vMin.toFixed(2); th.max=vMax.toFixed(2); th.step='0.01';
     const cur=Number(th.value);
-    if(!Number.isFinite(cur)||cur<vMin||cur>vMax){
-      th.value=(USE_FIXED_DOMAIN ? 0.50 : (vMin+0.1*(vMax-vMin))).toFixed(2);
-    }
-
+    if(!Number.isFinite(cur)||cur<vMin||cur>vMax){ th.value='0.50'; }
     thv.textContent=Number(th.value).toFixed(2);
-    renderLegend(vMin,vMax);
-    drawLayer(Number(th.value),vMin,vMax);
+    renderLegendWithBreaks(LEGEND_BREAKS);
+    drawLayer(Number(th.value), LEGEND_BREAKS);
   }
 
   let debounce=null;
@@ -311,11 +351,97 @@
     debounce=setTimeout(()=>recomputeAndRedraw(),80);
   });
 
+  function buildRecentDateList() {
+    const runs = (manifest.runs||[]); // expected sorted desc by date
+    if (!runs.length) return [];
+    // take up to last 30 by date (newest first), then reverse to chronological
+    const newestFirst = runs.map(r=>r.date).filter(Boolean);
+    const unique = Array.from(new Set(newestFirst));
+    const slice = unique.slice(0, 30);
+    return slice.reverse(); // chronological: left=oldest, right=newest
+  }
+
+  function syncDateSlider() {
+    dateList = buildRecentDateList();
+    if (!dateList.length) {
+      dateSlider.style.display = 'none';
+      prevDateBtn.style.display = 'none';
+      nextDateBtn.style.display = 'none';
+      playBtn.style.display = 'none';
+      dateLabel.textContent = '—';
+      return;
+    }
+    dateSlider.style.display = 'block';
+    prevDateBtn.style.display = 'inline-block';
+    nextDateBtn.style.display = 'inline-block';
+    playBtn.style.display = 'inline-block';
+    dateSlider.min = 0;
+    dateSlider.max = Math.max(0, dateList.length - 1);
+
+    // Default knob at rightmost (most recent)
+    const idx = (currentDate ? Math.max(0, dateList.indexOf(currentDate)) : dateList.length - 1);
+    dateSlider.value = idx;
+    dateLabel.textContent = dateList[idx];
+  }
+
+  async function setDateByIndex(idx) {
+    idx = Math.max(Number(dateSlider.min), Math.min(Number(dateSlider.max), idx));
+    const target = dateList[idx];
+    if (!target) return;
+    try {
+      setTop('Loading…');
+      await loadByDate(target);
+      currentDate = target;
+      dateSlider.value = idx;
+      dateLabel.textContent = target;
+    } catch (err) {
+      console.error(err);
+      setTop('Load error');
+    }
+  }
+
+  async function stepDate(delta) {
+    const idx = Number(dateSlider.value) + delta;
+    await setDateByIndex(idx);
+  }
+
+  // Chronological autoplay: move right until end; loop if toggled
+  function startPlay(){
+    if (isPlaying || !dateList.length) return;
+    isPlaying = true;
+    playBtn.textContent = '⏸';
+    playTimer = setInterval(async () => {
+      let idx = Number(dateSlider.value);
+      if (idx < Number(dateSlider.max)) {
+        await setDateByIndex(idx + 1);
+      } else {
+        if (loopToggle.checked) {
+          await setDateByIndex(Number(dateSlider.min));
+        } else {
+          stopPlay();
+        }
+      }
+    }, AUTOPLAY_MS);
+  }
+  function stopPlay(){
+    isPlaying = false;
+    playBtn.textContent = '▶';
+    if (playTimer) { clearInterval(playTimer); playTimer = null; }
+  }
+  function togglePlay(){ isPlaying ? stopPlay() : startPlay(); }
+
+  dateSlider.addEventListener('input', async ()=>{ await setDateByIndex(Number(dateSlider.value)); });
+  prevDateBtn.addEventListener('click', ()=> stepDate(-1));
+  nextDateBtn.addEventListener('click', ()=> stepDate(1));
+  playBtn.addEventListener('click', togglePlay);
+  fitBtn.addEventListener('click', fitToLayer);
+
   async function loadLatest(){
     try{
       const meta=await getJSON('/predictions/latest.json');
       probCol=meta.prob_col||'p_rf';
       setSubtitle(meta);
+      currentDate = meta.date || currentDate;
     }catch(e){ console.warn('latest.json missing'); }
     const geo=await getJSON('/predictions/latest.geojson');
     features=(geo.features||[]).filter(f=>f&&f.properties);
@@ -352,8 +478,9 @@
     const v=e.target.value;
     try{
       setTop('Loading…');
-      if(v==='__latest__') await loadLatest();
-      else await loadByDate(v);
+      if(v==='__latest__') { await loadLatest(); }
+      else { await loadByDate(v); currentDate = v; }
+      syncDateSlider();
     }catch(err){
       console.error(err);
       setTop('Load error');
@@ -365,6 +492,9 @@
 
   populateRuns();
   await loadLatest();
+  syncDateSlider();
+  if (dateList.length) { dateLabel.textContent = dateList[dateList.length-1]; } // newest on right
+
 })();
 </script>
 </body>
