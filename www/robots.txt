@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://realtime-buncombe.onrender.com/sitemap.xml
