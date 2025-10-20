@@ -4,26 +4,53 @@
   <meta charset="utf-8" />
   <title>Asheville Landslide Project — Summary</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Summary of the Buncombe County landslide risk model and the web application features." />
+  <meta name="description" content="Summary of the Buncombe County landslide risk model, data sources, performance, and how to interpret the map." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    :root { --fg:#0b2239; --muted:#5b6b7a; --card:#fff; --bg:#f6f8fb; }
+    :root { --fg:#0b2239; --muted:#5b6b7a; --card:#fff; --bg:#f6f8fb; --border:#e7ecf2; --accent:#0b6; }
     * { box-sizing: border-box; }
-    html, body { margin:0; padding:0; background:var(--bg); color:var(--fg); font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-    .wrap { max-width: 920px; margin: 32px auto; padding: 0 16px; }
-    header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 16px; }
-    h1 { font-size: 1.8rem; margin:0; }
-    .actions a { text-decoration:none; color:#fff; background:#0b6; padding:10px 14px; border-radius:10px; display:inline-block; }
-    .card { background:var(--card); border:1px solid #e7ecf2; border-radius:14px; padding:18px 18px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+    html, body { margin:0; padding:0; background:var(--bg); color:var(--fg); font:16px/1.6 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .wrap { max-width: 1120px; margin: 32px auto; padding: 0 16px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 18px; }
+    h1 { font-size: 1.9rem; margin:0; letter-spacing:-0.01em; }
+    .actions a { text-decoration:none; color:#fff; background:var(--accent); padding:10px 14px; border-radius:10px; display:inline-block; font-weight:600; }
+    .row { display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.04); }
     h2 { font-size:1.25rem; margin:0 0 10px; }
+    h3 { font-size:1.05rem; margin:0 0 8px; }
     .muted { color: var(--muted); }
     ul { margin:8px 0 0 20px; }
     code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
     .grid { display:grid; grid-template-columns: 1fr; gap:16px; }
-    @media (min-width: 880px){ .grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 960px){ .grid-2 { grid-template-columns: 1fr 1fr; } .grid-3 { grid-template-columns: repeat(3,1fr); } }
     .pill { display:inline-block; font-size:12px; border:1px solid #dbe4ee; border-radius:999px; padding:2px 8px; color:#234; background:#fff; }
-    a.inline { color:#0a6; text-decoration:none; }
+    a.inline { color:#0a6; text-decoration:none; font-weight:600; }
     .back { text-decoration:none; font-weight:600; color:#0a6; }
     .badge { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; background:#eef6f2; color:#0b6; border:1px solid #d9efe4; }
+    figure { margin:0; }
+    .thumb { width:100%; border-radius:12px; border:1px solid var(--border); box-shadow:0 1px 3px rgba(0,0,0,.03); cursor:zoom-in; }
+    figcaption { font-size:13px; color:var(--muted); margin-top:6px; }
+    .cols { display:grid; grid-template-columns:1fr; gap:16px; }
+    @media (min-width: 960px){ .cols { grid-template-columns:2fr 1fr; } }
+    .tag { display:inline-block; font-size:11px; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#384cff; border:1px solid #dee3ff; font-weight:600; }
+    .callout { background:#fff; border:1px dashed #d7dee8; border-radius:12px; padding:12px 14px; }
+    .mini { font-size:14px; }
+    .tight li { margin:4px 0; }
+    .legend-like { display:inline-block; padding:4px 8px; border:1px solid var(--border); border-radius:8px; background:#fff; font-size:13px; }
+
+    /* Lightbox */
+    .lb { position: fixed; inset: 0; background: rgba(0,0,0,.64); display: none; align-items: center; justify-content: center; padding: 24px; z-index: 1000; }
+    .lb.open { display: flex; }
+    .lb img { max-width: 96vw; max-height: 92vh; border-radius: 12px; box-shadow: 0 12px 36px rgba(0,0,0,.35); }
+    .lb-close { position: fixed; top: 16px; right: 20px; font-size: 28px; color: #fff; cursor: pointer; background: rgba(0,0,0,.4); width:36px; height:36px; border-radius: 50%; display:flex; align-items:center; justify-content:center; }
+
+    .kpi { display:flex; gap:10px; align-items:center; }
+    .kpi .v { font-size: 1.25rem; font-weight:700; }
+    .sep { height:1px; background:var(--border); margin:14px 0; }
   </style>
 </head>
 <body>
@@ -37,71 +64,218 @@
 
     <div class="card">
       <h2>Paper</h2>
-      <p class="muted">A concise overview plus a link to the full manuscript.</p>
+      <p class="muted mini">Overview and link to the manuscript.</p>
       <p>
         <strong>A Dynamic Risk Prediction Model for Rainfall-Triggered Landslides in Buncombe County, North Carolina</strong><br/>
-        <a class="inline" href="/assets/buncombe-landslide-paper.pdf" target="_blank" rel="noopener">Read the paper (PDF)</a>
+        <a class="inline" href="/www/assets/buncombe-landslide-paper.pdf" target="_blank" rel="noopener">Read the paper (PDF)</a>
       </p>
-      <ul>
-        <li><strong>Goal:</strong> Localized, near-real-time risk model fusing daily rainfall windows with terrain and soils.</li>
-        <li><strong>Data:</strong> 302 landslides (1981–2024) + 302 controls; PRISM daily rainfall windows (R1d, R3d, R7d, R30d, Max 3-day/30-day); USGS DEM (elevation &amp; slope); SSURGO soil depth.</li>
-        <li><strong>Models:</strong> Logistic Regression, Random Forest, XGBoost; stratified CV with spatial blocking; SHAP for interpretation.</li>
-        <li><strong>Findings:</strong> Slope dominates. Short-duration/intense rainfall boosts risk; prolonged 30-day accumulation can show a negative association with immediate triggering.</li>
-        <li><strong>Best overall:</strong> Random Forest with terrain + rainfall (~0.81 accuracy, ~0.89 AUC).</li>
+      <ul class="tight">
+        <li><strong>Goal:</strong> Localized, near–real-time risk model fusing daily rainfall windows with terrain and soils.</li>
+        <li><strong>Data:</strong> 302 landslides (1981–2024) + 302 controls; PRISM daily windows (R1d, R3d, R7d, R30d, Max 3-day/30-day); USGS DEM; SSURGO soil depth.</li>
+        <li><strong>Models:</strong> Logistic Regression, Random Forest, XGBoost; spatial-block CV; SHAP interpretation.</li>
+        <li><strong>Findings:</strong> Slope dominates; short-duration/intense rainfall increases risk; prolonged 30-day accumulation often reflects background wetness.</li>
+        <li><strong>Best overall:</strong> Random Forest with terrain + rainfall (≈0.81 accuracy; ≈0.89 AUC).</li>
       </ul>
     </div>
 
-    <div class="grid">
-      <div class="card">
-        <h2>How the model works</h2>
-        <ul>
-          <li>Daily PRISM precipitation is summarized into 1–30-day windows and rolling maxima.</li>
-          <li>Static terrain (elevation, slope) and soil depth are sampled on a county grid.</li>
-          <li>Random Forest outputs per-cell probabilities (<span class="mono">p_rf</span>), updated as new rainfall arrives.</li>
-          <li>Outputs are written to <span class="mono">predictions/historicData/YYYY/MM/</span> (Parquet, GeoJSON, meta).</li>
-        </ul>
+    <!-- Key Figures -->
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <h2 style="margin:0;">Key Figures</h2>
+        <span class="badge">overview</span>
       </div>
-
-      <div class="card">
-        <h2>What this website provides</h2>
-        <ul>
-          <li><strong>Latest map:</strong> <span class="mono">/predictions/latest.geojson</span> for immediate viewing.</li>
-          <li><strong>Historical runs:</strong> Date-addressable GeoJSON &amp; Parquet under <span class="mono">/predictions/historicData/...</span>.</li>
-          <li><strong>Manifest:</strong> <span class="mono">/predictions/index.json</span> lists all available dates for the “Runs” picker.</li>
-          <li><strong>Reproducibility:</strong> Each run has <span class="mono">meta_YYYY-MM-DD.json</span> with counts, date, features, and model info.</li>
-        </ul>
+      <div class="grid grid-3">
+        <figure>
+          <img class="thumb" data-lb="/assets/study-area-map.jpg" src="/assets/study-area-map.jpg" alt="Study area map: Buncombe County with key towns and sample landslides">
+          <figcaption>Study area — Buncombe County, NC</figcaption>
+        </figure>
+        <figure>
+          <img class="thumb" data-lb="/assets/elevation-map.png" src="/assets/elevation-map.png" alt="Elevation map">
+          <figcaption>Elevation (DEM, 40 m)</figcaption>
+        </figure>
+        <figure>
+          <img class="thumb" data-lb="/assets/slope-map.png" src="/assets/slope-map.png" alt="Slope map">
+          <figcaption>Slope (degrees)</figcaption>
+        </figure>
+        <figure>
+          <img class="thumb" data-lb="/assets/soil-depth-ssurgo.png" src="/assets/soil-depth-ssurgo.png" alt="SSURGO soil depth overview">
+          <figcaption>Soil depth (SSURGO)</figcaption>
+        </figure>
+        <figure>
+          <img class="thumb" data-lb="/assets/rainfall-windows-diagram.svg" src="/assets/rainfall-windows-diagram.svg" alt="Rainfall windows diagram R1d, R3d, R7d, R30d, Max 3-day, Max 30-day">
+          <figcaption>PRISM rainfall windows & rolling maxima</figcaption>
+        </figure>
+        <figure>
+          <img class="thumb" data-lb="/assets/pipeline-diagram.svg" src="/assets/pipeline-diagram.svg" alt="Model pipeline diagram">
+          <figcaption>Pipeline: PRISM → features → RF/XGB → web map</figcaption>
+        </figure>
       </div>
     </div>
 
-    <!-- NEW SECTION -->
+    <!-- Results -->
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <h2 style="margin:0;">Results</h2>
+        <span class="badge">performance & interpretation</span>
+      </div>
+      <div class="grid grid-2">
+        <figure>
+          <img class="thumb" data-lb="/assets/performance-bars.png" src="/assets/performance-bars.png" alt="Model performance bars AUC and Accuracy for LR, RF, XGB with feature sets">
+          <figcaption>Performance summary (AUC, Accuracy; spatial CV)</figcaption>
+        </figure>
+        <div class="callout">
+          <div class="kpi"><span class="v">AUC ≈ 0.89</span><span class="muted">Random Forest, terrain+rainfall</span></div>
+          <div class="kpi"><span class="v">Accuracy ≈ 0.81</span><span class="muted">under spatial-block CV</span></div>
+          <div class="sep"></div>
+          <p class="mini muted">Spatial CV reduces overoptimism by respecting spatial autocorrelation. It better reflects generalization to new locations.</p>
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <figure>
+          <img class="thumb" data-lb="/assets/shap-beeswarm.png" src="/assets/shap-beeswarm.png" alt="SHAP beeswarm highlighting feature importances">
+          <figcaption>SHAP: Slope dominates; short-term rainfall features rank high</figcaption>
+        </figure>
+        <figure>
+          <img class="thumb" data-lb="/assets/reliability-plot.png" src="/assets/reliability-plot.png" alt="Reliability (calibration) plot predicted vs observed">
+          <figcaption>Reliability: compare predicted vs observed; consider isotonic/Platt if miscalibrated</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- How to interpret -->
     <div class="card">
       <h2>How to interpret it <span class="badge">probabilities</span></h2>
       <ul>
-        <li><strong>What a probability means:</strong> Values are learned from a <em>balanced</em> dataset (302 landslides vs 302 non-events, 1981–2024). A value is the model’s estimated likelihood that current terrain + rainfall conditions resemble historical triggering conditions.</li>
-        <li><strong>Susceptibility vs forecast:</strong> On any given day, if you refresh rainfall windows (R1d–R30d, Max3d/30d) with current PRISM data, the map functions as a <em>nowcast</em> of instability conditioned on today’s hydrometeorology. It is not a multi-day forecast and should be interpreted as short-term (≈24 h) failure likelihood given present conditions.</li>
+        <li><strong>What a probability means:</strong> Values come from a balanced training set (302 vs 302). A pixel’s value is the model’s estimate that current terrain + rainfall resemble historical triggers.</li>
+        <li><strong>Nowcast, not a multi-day forecast:</strong> The map reflects conditions given today’s rainfall windows. Extendable in future by ingesting forecast precipitation.</li>
         <li><strong>Reading the scale:</strong>
-          <ul>
-            <li><span class="mono">0.0–0.3</span> — low: conditions unlike past failures (generally stable)</li>
-            <li><span class="mono">0.4–0.6</span> — uncertain/watch: near historical thresholds; monitor during ongoing rain</li>
-            <li><span class="mono">0.7–1.0</span> — high: conditions closely match past triggers; prioritize attention</li>
-          </ul>
+          <span class="legend-like">0.0–0.4</span> low ·
+          <span class="legend-like">0.4–0.6</span> watch ·
+          <span class="legend-like">0.6–0.7</span> elevated ·
+          <span class="legend-like">0.7–0.8</span> high ·
+          <span class="legend-like">0.8–0.9</span> very high ·
+          <span class="legend-like">0.9–1.0</span> extreme
         </li>
-        <li><strong>Thresholds:</strong> The default visual cutoff of 0.5 is for display only. For operations, choose a threshold via ROC/PR curves (e.g., Youden’s J) or by cost (favor recall for safety-critical alerts).</li>
-        <li><strong>Calibration:</strong> To treat values as actionable probabilities, evaluate reliability (e.g., Brier score, reliability curves) on recent years and apply Platt or isotonic calibration if needed.</li>
-        <li><strong>Caveats:</strong> Map indicates likelihood, not consequence (size/runout). Resolution limits (PRISM grid), reporting bias in historical inventories, and terrain changes (construction, vegetation) can affect accuracy.</li>
-        <li><strong>Example:</strong> A pixel with <span class="mono">p=0.4</span> means moderate susceptibility today—some failure-like signals (slope/rainfall) but below the typical triggering threshold. Under additional rainfall, it may cross into the watch/high zone.</li>
+        <li><strong>Thresholds:</strong> Use ROC/PR (e.g., Youden’s J) or cost-based selection (favor recall for safety-critical alerts). Display defaults are for visualization.</li>
+        <li><strong>Calibration:</strong> Treat <span class="mono">p_rf</span> as a probability after checking reliability; apply isotonic or Platt scaling if needed.</li>
+        <li><strong>Caveats:</strong> Indicates likelihood, not consequences (size/runout). PRISM smoothing vs convective bursts; inventory/reporting biases; terrain/land-use change.</li>
       </ul>
+    </div>
+
+    <!-- PRISM & data lineage -->
+    <div class="card cols">
+      <div>
+        <h2>Why PRISM 800 m (and limits)</h2>
+        <p>PRISM provides daily 800 m precipitation back to 1981—ideal for rolling windows (R1–R30, Max3/Max30) that refresh the map near-real-time. Sub-kilometer convective bursts can be smoothed, so localized extremes may under-represent true peaks compared to the 40 m terrain grid.</p>
+      </div>
+      <div>
+        <h2>Data lineage & reproducibility</h2>
+        <ul class="tight">
+          <li><strong>Latest:</strong> <span class="mono">/predictions/latest.geojson</span>, <span class="mono">/predictions/latest.json</span></li>
+          <li><strong>History:</strong> <span class="mono">/predictions/index.json</span></li>
+          <li><strong>Per-run:</strong> <span class="mono">predictions/historicData/YYYY/MM/</span> (GeoJSON, Parquet, meta)</li>
+          <li><strong>CRS & grid:</strong> documented in each run’s <span class="mono">meta_YYYY-MM-DD.json</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Context: Helene + Global -->
+    <div class="card cols">
+      <div>
+        <h2>Helene 2024: why near-nowcasting matters</h2>
+        <figure>
+          <img class="thumb" data-lb="/assets/helene-context.jpg" src="/assets/helene-context.jpg" alt="Context thumbnail related to Hurricane Helene landslides">
+          <figcaption>Regional landslide outbreak during Helene (Sep 26–27, 2024), underscoring the need for localized, timely risk views.</figcaption>
+        </figure>
+      </div>
+      <div>
+        <h2>How this compares globally</h2>
+        <figure>
+          <img class="thumb" data-lb="/assets/lhasa-thumb.jpg" src="/assets/lhasa-thumb.jpg" alt="NASA LHASA nowcast thumbnail">
+          <figcaption>Global nowcasts (e.g., NASA LHASA v2) provide broad coverage. This project complements them with county-scale detail, tailored features, and reproducible artifacts.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- Website tour -->
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <h2 style="margin:0;">What this website provides</h2>
+        <span class="badge">UI tour</span>
+      </div>
+      <div class="grid grid-2">
+        <div>
+          <ul>
+            <li><strong>Latest map:</strong> <span class="mono">/predictions/latest.geojson</span> for immediate viewing.</li>
+            <li><strong>Historical runs:</strong> date-addressable GeoJSON & Parquet under <span class="mono">/predictions/historicData/...</span>.</li>
+            <li><strong>Manifest:</strong> <span class="mono">/predictions/index.json</span> powers the “Runs” picker.</li>
+            <li><strong>Reproducibility:</strong> Each run has <span class="mono">meta_YYYY-MM-DD.json</span> with counts, date, features, model info.</li>
+          </ul>
+          <div class="callout mini" style="margin-top:10px;">
+            <span class="tag">Tip</span> Use the threshold, date slider, play/pause, loop, and “Fit” controls to compare runs consistently without auto-zoom jumps.
+          </div>
+        </div>
+        <figure>
+          <img class="thumb" data-lb="/assets/ui-tour.png" src="/assets/ui-tour.png" alt="Annotated UI screenshot with controls labeled">
+          <figcaption>Annotated UI: Threshold, Date slider, Play/Pause, Loop, Runs picker, Fit</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- Threshold guide -->
+    <div class="card">
+      <h2>Threshold guide</h2>
+      <div class="grid grid-2">
+        <figure>
+          <img class="thumb" data-lb="/assets/threshold-legend.png" src="/assets/threshold-legend.png" alt="Custom probability bins legend">
+          <figcaption>Display bins: 0–0.4, 0.4–0.6, 0.6–0.7, 0.7–0.8, 0.8–0.9, 0.9–1.0</figcaption>
+        </figure>
+        <div>
+          <ul class="tight">
+            <li>Choose operational thresholds via ROC/PR or cost tradeoffs.</li>
+            <li>For public comms, prefer stability and consistency over chasing day-to-day variance.</li>
+            <li>Pair thresholds with a verification plan during future events.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ethics & disclaimer -->
+    <div class="card">
+      <h2>Ethics & use</h2>
+      <p>This map is a decision-support tool. It complements, but does not replace, official warnings or site-specific geotechnical assessment. Changes in infrastructure, vegetation, or reporting bias can affect accuracy. Use with local expertise.</p>
     </div>
 
     <div class="card">
       <h2>How to cite</h2>
-      <p>
-        Please cite: <em>A Dynamic Risk Prediction Model for Rainfall-Triggered Landslides in Buncombe County, North Carolina</em>.
-        <a class="inline" href="/assets/buncombe-landslide-paper.pdf" target="_blank" rel="noopener">PDF</a>
-      </p>
+      <p>Please cite: <em>A Dynamic Risk Prediction Model for Rainfall-Triggered Landslides in Buncombe County, North Carolina</em>. <a class="inline" href="/www/assets/buncombe-landslide-paper.pdf" target="_blank" rel="noopener">PDF</a></p>
     </div>
 
     <p><a class="back" href="index.html">← Back to the live map</a></p>
   </div>
+
+  <!-- Lightbox -->
+  <div id="lb" class="lb" aria-hidden="true">
+    <div class="lb-close" id="lbClose" aria-label="Close">×</div>
+    <img id="lbImg" alt="">
+  </div>
+
+  <script>
+    const lb = document.getElementById('lb');
+    const lbImg = document.getElementById('lbImg');
+    const lbClose = document.getElementById('lbClose');
+    document.querySelectorAll('[data-lb]').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const src = el.getAttribute('data-lb');
+        lbImg.src = src;
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden','false');
+      });
+    });
+    function closeLb(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); lbImg.src=''; }
+    lbClose.addEventListener('click', closeLb);
+    lb.addEventListener('click', e=>{ if(e.target===lb) closeLb(); });
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLb(); });
+  </script>
 </body>
 </html>
