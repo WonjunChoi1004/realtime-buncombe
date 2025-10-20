@@ -1,12 +1,12 @@
 {
-  "date": "2025-10-18",
-  "rainfall_through": "2025-10-18",
+  "date": "2025-10-19",
+  "rainfall_through": "2025-10-19",
   "rows": 2452,
   "chunks": 1,
   "outputs": {
-    "parquet": "predictions/historicData/2025/10/predictions_2025-10-18.parquet",
-    "geojson": "predictions/historicData/2025/10/map_2025-10-18.geojson",
-    "meta": "predictions/historicData/2025/10/meta_2025-10-18.json"
+    "parquet": "predictions/historicData/2025/10/predictions_2025-10-19.parquet",
+    "geojson": "predictions/historicData/2025/10/map_2025-10-19.geojson",
+    "meta": "predictions/historicData/2025/10/meta_2025-10-19.json"
   },
   "models": [
     "logistic",
