@@ -1,7 +1,0 @@
-{
-  "target_date": "2025-10-17",
-  "rainfall_through": "2025-10-17",
-  "rows": 2452,
-  "chunks": 1,
-  "outputs": "parquet"
-}

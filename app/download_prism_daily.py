@@ -26,6 +26,7 @@ def load_config(cfg_path: Path):
         "start_offset_days": int(psync.get("start_offset_days", 1)),
         "end_offset_days": int(psync.get("end_offset_days", 30)),
         "retention_days": int(psync.get("retention_days", 30)),
+        "cleanup_old": bool(psync.get("cleanup_old", True)),  # default True
         "compare_fields": list(psync.get("compare_fields", ["etag", "last_modified_utc", "content_length"])),
         "timeouts": {
             "head": int(psync.get("timeouts", {}).get("head_seconds", 30)),
@@ -205,9 +206,12 @@ def main():
         except Exception as e:
             print(f"[ERR ] {d} {e}")
 
-    keep = { today - dt.timedelta(days=delta) for delta in range(1, keep_window + 1) }
-    print("[INFO] Pruning files outside the past window...")
-    cleanup_old_data(cfg, keep)
+    if cfg.get("cleanup_old", True):
+        keep = {today - dt.timedelta(days=delta) for delta in range(1, keep_window + 1)}
+        print("[INFO] Pruning files outside the past window...")
+        cleanup_old_data(cfg, keep)
+    else:
+        print("[INFO] cleanup_old=False — skipping file deletion.")
 
 if __name__ == "__main__":
     main()

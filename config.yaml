@@ -48,6 +48,7 @@ prism_sync:
   start_offset_days: 1
   end_offset_days: 30
   retention_days: 30
+  cleanup_old: false
 
   # Compare ONLY local .meta_2025-10-17.json vs remote HEAD
   compare_fields: ["etag", "last_modified_utc", "content_length"]

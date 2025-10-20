@@ -1,0 +1,15 @@
+{
+  "date": "2025-09-23",
+  "rainfall_through": "2025-09-23",
+  "outputs": {
+    "parquet": "predictions/historicData/2025/09/predictions_2025-09-23.parquet",
+    "geojson": "predictions/historicData/2025/09/map_2025-09-23.geojson",
+    "meta": "predictions/historicData/2025/09/meta_2025-09-23.json"
+  },
+  "models": [
+    "logistic",
+    "rf",
+    "xgb"
+  ],
+  "pipeline": "historic_period"
+}
