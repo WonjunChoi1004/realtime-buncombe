@@ -37,6 +37,36 @@
       "meta": "predictions/historicData/2025/10/meta_2025-10-14.json"
     },
     {
+      "date": "2025-10-13",
+      "geojson": "predictions/historicData/2025/10/map_2025-10-13.geojson",
+      "parquet": "predictions/historicData/2025/10/predictions_2025-10-13.parquet",
+      "meta": "predictions/historicData/2025/10/meta_2025-10-13.json"
+    },
+    {
+      "date": "2025-10-12",
+      "geojson": "predictions/historicData/2025/10/map_2025-10-12.geojson",
+      "parquet": "predictions/historicData/2025/10/predictions_2025-10-12.parquet",
+      "meta": "predictions/historicData/2025/10/meta_2025-10-12.json"
+    },
+    {
+      "date": "2025-10-11",
+      "geojson": "predictions/historicData/2025/10/map_2025-10-11.geojson",
+      "parquet": "predictions/historicData/2025/10/predictions_2025-10-11.parquet",
+      "meta": "predictions/historicData/2025/10/meta_2025-10-11.json"
+    },
+    {
+      "date": "2025-10-10",
+      "geojson": "predictions/historicData/2025/10/map_2025-10-10.geojson",
+      "parquet": "predictions/historicData/2025/10/predictions_2025-10-10.parquet",
+      "meta": "predictions/historicData/2025/10/meta_2025-10-10.json"
+    },
+    {
+      "date": "2025-10-09",
+      "geojson": "predictions/historicData/2025/10/map_2025-10-09.geojson",
+      "parquet": "predictions/historicData/2025/10/predictions_2025-10-09.parquet",
+      "meta": "predictions/historicData/2025/10/meta_2025-10-09.json"
+    },
+    {
       "date": "2025-10-08",
       "geojson": "predictions/historicData/2025/10/map_2025-10-08.geojson",
       "parquet": "predictions/historicData/2025/10/predictions_2025-10-08.parquet",
