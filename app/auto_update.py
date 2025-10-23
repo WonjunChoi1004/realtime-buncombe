@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import subprocess, sys, os, logging
+import subprocess, sys, os, logging, time, socket
 from datetime import datetime
 from pathlib import Path
 
@@ -18,9 +18,24 @@ log = logging.getLogger("auto")
 
 def run(cmd, cwd=None):
     p = subprocess.run(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    if p.stdout: log.info(p.stdout.rstrip())
+    if p.stdout:
+        log.info(p.stdout.rstrip())
     if p.returncode != 0:
         raise SystemExit(f"Command failed ({p.returncode}): {' '.join(cmd)}")
+
+def internet_available(host="8.8.8.8", port=53, timeout=3):
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except OSError:
+        return False
+
+def wait_for_internet():
+    while not internet_available():
+        log.warning("No internet connection — delaying run. Retrying in 15 minutes...")
+        time.sleep(900)  # 15 minutes
+    log.info("Internet connection detected. Proceeding with update.")
 
 def git_has_changes():
     p = subprocess.run(["git", "status", "--porcelain"], cwd=REPO_ROOT, stdout=subprocess.PIPE, text=True)
@@ -40,9 +55,15 @@ def git_commit_and_push():
             return
         except SystemExit as e:
             log.warning(f"Push failed (attempt {i+1}/3): {e}")
+            if not internet_available():
+                log.warning("Internet lost mid-push — waiting to retry connection.")
+                wait_for_internet()
+            time.sleep(5 * (i + 1))
     raise SystemExit("Push failed after 3 attempts.")
 
 def main():
+    wait_for_internet()  # ✅ new: ensure online before running
+
     log.info("Running download_prism_daily.py")
     run([PYTHON, str(APP_DIR / "download_prism_daily.py")], cwd=APP_DIR)
 
