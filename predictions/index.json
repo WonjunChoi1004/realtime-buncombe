@@ -1,6 +1,12 @@
 {
   "runs": [
     {
+      "date": "2025-11-17",
+      "geojson": "predictions/historicData/2025/11/map_2025-11-17.geojson",
+      "parquet": "predictions/historicData/2025/11/predictions_2025-11-17.parquet",
+      "meta": "predictions/historicData/2025/11/meta_2025-11-17.json"
+    },
+    {
       "date": "2025-11-16",
       "geojson": "predictions/historicData/2025/11/map_2025-11-16.geojson",
       "parquet": "predictions/historicData/2025/11/predictions_2025-11-16.parquet",
@@ -349,5 +355,5 @@
       "meta": "predictions/historicData/2025/09/meta_2025-09-19.json"
     }
   ],
-  "latest": "2025-11-16"
+  "latest": "2025-11-17"
 }
