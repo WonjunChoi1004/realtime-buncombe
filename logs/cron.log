@@ -10268,3 +10268,179 @@ meta: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicDa
 latest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.geojson, /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.json
 manifest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/index.json
 2026-01-21 15:52:45,965 | INFO | Committing and pushing changes
+2026-01-21 15:52:46,694 | INFO | [main 93aa89b] Auto-update: rainfall & predictions @ 2026-01-21 15:52:46
+ 7 files changed, 139 insertions(+), 7 deletions(-)
+ create mode 100644 predictions/historicData/2026/01/map_2026-01-20.geojson
+ create mode 100644 predictions/historicData/2026/01/meta_2026-01-20.json
+ create mode 100644 predictions/historicData/2026/01/predictions_2026-01-20.parquet
+2026-01-21 15:52:52,667 | INFO | Locking support detected on remote "origin". Consider enabling it with:
+  $ git config lfs.https://github.com-buncombe/WonjunChoi1004/realtime-buncombe.git/info/lfs.locksverify true
+Uploading LFS objects: 100% (1/1), 73 KB | 0 B/s, done.
+To github.com-buncombe:WonjunChoi1004/realtime-buncombe.git
+   e12e7ef..93aa89b  main -> main
+2026-01-21 15:52:52,668 | INFO | Push succeeded.
+▶️ Running daily auto-update job...
+2026-01-22 05:00:08,652 | WARNING | No internet connection — delaying run. Retrying in 15 minutes...
+2026-01-22 05:15:13,062 | WARNING | No internet connection — delaying run. Retrying in 15 minutes...
+2026-01-22 05:30:17,719 | WARNING | No internet connection — delaying run. Retrying in 15 minutes...
+2026-01-22 05:45:22,983 | WARNING | No internet connection — delaying run. Retrying in 15 minutes...
+2026-01-22 06:00:27,993 | WARNING | No internet connection — delaying run. Retrying in 15 minutes...
+2026-01-22 06:15:32,309 | WARNING | No internet connection — delaying run. Retrying in 15 minutes...
+2026-01-22 06:30:35,126 | INFO | Internet connection detected. Proceeding with update.
+2026-01-22 06:30:35,613 | INFO | Running download_prism_daily.py
+2026-01-22 06:31:08,817 | INFO | /Users/wonjunchoi/PycharmProjects/realtime-buncombe/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+[SKIP] 2026-01-21 not found online.
+[CLEAN] 2026-01-20 removed old expanded folder → prism_ppt_us_30s_20260120
+[GET ] 2026-01-20 → https://data.prism.oregonstate.edu/time_series/us/an/800m/ppt/daily/2026/prism_ppt_us_30s_20260120.zip
+[DONE] Updated ZIP for 2026-01-20
+[MISS] 2026-01-20 missing expanded .tif — extracting now.
+[UNZIP] Extracted → /Users/wonjunchoi/PycharmProjects/realtime-buncombe/data/rain/prism_ppt_us_30s_20260120
+[CLEAN] 2026-01-20 removed ZIP after extraction.
+[OK  ] 2026-01-19 metadata matches remote
+[OK  ] 2026-01-19 expanded data present (prism_ppt_us_30s_20260119.tif)
+[OK  ] 2026-01-18 metadata matches remote
+[OK  ] 2026-01-18 expanded data present (prism_ppt_us_30s_20260118.tif)
+[OK  ] 2026-01-17 metadata matches remote
+[OK  ] 2026-01-17 expanded data present (prism_ppt_us_30s_20260117.tif)
+[OK  ] 2026-01-16 metadata matches remote
+[OK  ] 2026-01-16 expanded data present (prism_ppt_us_30s_20260116.tif)
+[OK  ] 2026-01-15 metadata matches remote
+[OK  ] 2026-01-15 expanded data present (prism_ppt_us_30s_20260115.tif)
+[OK  ] 2026-01-14 metadata matches remote
+[OK  ] 2026-01-14 expanded data present (prism_ppt_us_30s_20260114.tif)
+[OK  ] 2026-01-13 metadata matches remote
+[OK  ] 2026-01-13 expanded data present (prism_ppt_us_30s_20260113.tif)
+[OK  ] 2026-01-12 metadata matches remote
+[OK  ] 2026-01-12 expanded data present (prism_ppt_us_30s_20260112.tif)
+[OK  ] 2026-01-11 metadata matches remote
+[OK  ] 2026-01-11 expanded data present (prism_ppt_us_30s_20260111.tif)
+[OK  ] 2026-01-10 metadata matches remote
+[OK  ] 2026-01-10 expanded data present (prism_ppt_us_30s_20260110.tif)
+[OK  ] 2026-01-09 metadata matches remote
+[OK  ] 2026-01-09 expanded data present (prism_ppt_us_30s_20260109.tif)
+[OK  ] 2026-01-08 metadata matches remote
+[OK  ] 2026-01-08 expanded data present (prism_ppt_us_30s_20260108.tif)
+[OK  ] 2026-01-07 metadata matches remote
+[OK  ] 2026-01-07 expanded data present (prism_ppt_us_30s_20260107.tif)
+[OK  ] 2026-01-06 metadata matches remote
+[OK  ] 2026-01-06 expanded data present (prism_ppt_us_30s_20260106.tif)
+[OK  ] 2026-01-05 metadata matches remote
+[OK  ] 2026-01-05 expanded data present (prism_ppt_us_30s_20260105.tif)
+[OK  ] 2026-01-04 metadata matches remote
+[OK  ] 2026-01-04 expanded data present (prism_ppt_us_30s_20260104.tif)
+[OK  ] 2026-01-03 metadata matches remote
+[OK  ] 2026-01-03 expanded data present (prism_ppt_us_30s_20260103.tif)
+[OK  ] 2026-01-02 metadata matches remote
+[OK  ] 2026-01-02 expanded data present (prism_ppt_us_30s_20260102.tif)
+[OK  ] 2026-01-01 metadata matches remote
+[OK  ] 2026-01-01 expanded data present (prism_ppt_us_30s_20260101.tif)
+[OK  ] 2025-12-31 metadata matches remote
+[OK  ] 2025-12-31 expanded data present (prism_ppt_us_30s_20251231.tif)
+[OK  ] 2025-12-30 metadata matches remote
+[OK  ] 2025-12-30 expanded data present (prism_ppt_us_30s_20251230.tif)
+[OK  ] 2025-12-29 metadata matches remote
+[OK  ] 2025-12-29 expanded data present (prism_ppt_us_30s_20251229.tif)
+[OK  ] 2025-12-28 metadata matches remote
+[OK  ] 2025-12-28 expanded data present (prism_ppt_us_30s_20251228.tif)
+[OK  ] 2025-12-27 metadata matches remote
+[OK  ] 2025-12-27 expanded data present (prism_ppt_us_30s_20251227.tif)
+[OK  ] 2025-12-26 metadata matches remote
+[OK  ] 2025-12-26 expanded data present (prism_ppt_us_30s_20251226.tif)
+[OK  ] 2025-12-25 metadata matches remote
+[OK  ] 2025-12-25 expanded data present (prism_ppt_us_30s_20251225.tif)
+[OK  ] 2025-12-24 metadata matches remote
+[OK  ] 2025-12-24 expanded data present (prism_ppt_us_30s_20251224.tif)
+[OK  ] 2025-12-23 metadata matches remote
+[OK  ] 2025-12-23 expanded data present (prism_ppt_us_30s_20251223.tif)
+[INFO] Pruning files outside the past window...
+[PRUNE] Removed old folder → prism_ppt_us_30s_20251222
+[PRUNE] Removed old file → prism_ppt_us_30s_20251222.meta.json
+2026-01-22 06:31:08,891 | INFO | Running predict_daily_triple.py
+2026-01-22 12:31:14,321 | WARNING | No internet connection — delaying run. Retrying in 15 minutes...
+2026-01-22 12:46:14,292 | INFO | Internet connection detected. Proceeding with update.
+2026-01-22 12:46:14,295 | INFO | Running download_prism_daily.py
+2026-01-22 12:46:31,127 | INFO | /Users/wonjunchoi/PycharmProjects/realtime-buncombe/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+[GET ] 2026-01-21 → https://data.prism.oregonstate.edu/time_series/us/an/800m/ppt/daily/2026/prism_ppt_us_30s_20260121.zip
+[DONE] Updated ZIP for 2026-01-21
+[MISS] 2026-01-21 missing expanded .tif — extracting now.
+[UNZIP] Extracted → /Users/wonjunchoi/PycharmProjects/realtime-buncombe/data/rain/prism_ppt_us_30s_20260121
+[CLEAN] 2026-01-21 removed ZIP after extraction.
+[OK  ] 2026-01-20 metadata matches remote
+[OK  ] 2026-01-20 expanded data present (prism_ppt_us_30s_20260120.tif)
+[OK  ] 2026-01-19 metadata matches remote
+[OK  ] 2026-01-19 expanded data present (prism_ppt_us_30s_20260119.tif)
+[OK  ] 2026-01-18 metadata matches remote
+[OK  ] 2026-01-18 expanded data present (prism_ppt_us_30s_20260118.tif)
+[CLEAN] 2026-01-17 removed old expanded folder → prism_ppt_us_30s_20260117
+[GET ] 2026-01-17 → https://data.prism.oregonstate.edu/time_series/us/an/800m/ppt/daily/2026/prism_ppt_us_30s_20260117.zip
+[DONE] Updated ZIP for 2026-01-17
+[MISS] 2026-01-17 missing expanded .tif — extracting now.
+[UNZIP] Extracted → /Users/wonjunchoi/PycharmProjects/realtime-buncombe/data/rain/prism_ppt_us_30s_20260117
+[CLEAN] 2026-01-17 removed ZIP after extraction.
+[OK  ] 2026-01-16 metadata matches remote
+[OK  ] 2026-01-16 expanded data present (prism_ppt_us_30s_20260116.tif)
+[OK  ] 2026-01-15 metadata matches remote
+[OK  ] 2026-01-15 expanded data present (prism_ppt_us_30s_20260115.tif)
+[OK  ] 2026-01-14 metadata matches remote
+[OK  ] 2026-01-14 expanded data present (prism_ppt_us_30s_20260114.tif)
+[OK  ] 2026-01-13 metadata matches remote
+[OK  ] 2026-01-13 expanded data present (prism_ppt_us_30s_20260113.tif)
+[OK  ] 2026-01-12 metadata matches remote
+[OK  ] 2026-01-12 expanded data present (prism_ppt_us_30s_20260112.tif)
+[OK  ] 2026-01-11 metadata matches remote
+[OK  ] 2026-01-11 expanded data present (prism_ppt_us_30s_20260111.tif)
+[OK  ] 2026-01-10 metadata matches remote
+[OK  ] 2026-01-10 expanded data present (prism_ppt_us_30s_20260110.tif)
+[OK  ] 2026-01-09 metadata matches remote
+[OK  ] 2026-01-09 expanded data present (prism_ppt_us_30s_20260109.tif)
+[OK  ] 2026-01-08 metadata matches remote
+[OK  ] 2026-01-08 expanded data present (prism_ppt_us_30s_20260108.tif)
+[OK  ] 2026-01-07 metadata matches remote
+[OK  ] 2026-01-07 expanded data present (prism_ppt_us_30s_20260107.tif)
+[OK  ] 2026-01-06 metadata matches remote
+[OK  ] 2026-01-06 expanded data present (prism_ppt_us_30s_20260106.tif)
+[OK  ] 2026-01-05 metadata matches remote
+[OK  ] 2026-01-05 expanded data present (prism_ppt_us_30s_20260105.tif)
+[OK  ] 2026-01-04 metadata matches remote
+[OK  ] 2026-01-04 expanded data present (prism_ppt_us_30s_20260104.tif)
+[OK  ] 2026-01-03 metadata matches remote
+[OK  ] 2026-01-03 expanded data present (prism_ppt_us_30s_20260103.tif)
+[OK  ] 2026-01-02 metadata matches remote
+[OK  ] 2026-01-02 expanded data present (prism_ppt_us_30s_20260102.tif)
+[OK  ] 2026-01-01 metadata matches remote
+[OK  ] 2026-01-01 expanded data present (prism_ppt_us_30s_20260101.tif)
+[OK  ] 2025-12-31 metadata matches remote
+[OK  ] 2025-12-31 expanded data present (prism_ppt_us_30s_20251231.tif)
+[OK  ] 2025-12-30 metadata matches remote
+[OK  ] 2025-12-30 expanded data present (prism_ppt_us_30s_20251230.tif)
+[OK  ] 2025-12-29 metadata matches remote
+[OK  ] 2025-12-29 expanded data present (prism_ppt_us_30s_20251229.tif)
+[OK  ] 2025-12-28 metadata matches remote
+[OK  ] 2025-12-28 expanded data present (prism_ppt_us_30s_20251228.tif)
+[OK  ] 2025-12-27 metadata matches remote
+[OK  ] 2025-12-27 expanded data present (prism_ppt_us_30s_20251227.tif)
+[OK  ] 2025-12-26 metadata matches remote
+[OK  ] 2025-12-26 expanded data present (prism_ppt_us_30s_20251226.tif)
+[OK  ] 2025-12-25 metadata matches remote
+[OK  ] 2025-12-25 expanded data present (prism_ppt_us_30s_20251225.tif)
+[OK  ] 2025-12-24 metadata matches remote
+[OK  ] 2025-12-24 expanded data present (prism_ppt_us_30s_20251224.tif)
+[OK  ] 2025-12-23 metadata matches remote
+[OK  ] 2025-12-23 expanded data present (prism_ppt_us_30s_20251223.tif)
+[INFO] Pruning files outside the past window...
+2026-01-22 12:46:31,128 | INFO | Running predict_daily_triple.py
+2026-01-22 13:09:39,936 | INFO | Rainfall window: 2025-12-23 → 2026-01-21 (30 files, 0 missing → zero-filled).
+Sampling rainfall at 2,452 PRISM grid cells…
+Sampling static attributes at grid centers…
+Running models…
+/Users/wonjunchoi/PycharmProjects/realtime-buncombe/venv/lib/python3.9/site-packages/sklearn/utils/validation.py:2732: UserWarning: X has feature names, but RandomForestClassifier was fitted without feature names
+  warnings.warn(
+ok: wrote 2,452 rows for 2026-01-21 (rainfall through 2026-01-21)
+parquet: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/01/predictions_2026-01-21.parquet
+geojson: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/01/map_2026-01-21.geojson
+meta: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/01/meta_2026-01-21.json
+latest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.geojson, /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.json
+manifest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/index.json
+2026-01-22 13:09:39,939 | INFO | Committing and pushing changes
