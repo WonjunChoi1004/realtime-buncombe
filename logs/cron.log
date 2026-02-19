@@ -13194,3 +13194,28 @@ meta: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicDa
 latest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.geojson, /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.json
 manifest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/index.json
 2026-02-19 08:46:42,508 | INFO | Committing and pushing changes
+2026-02-19 08:46:43,230 | INFO | [main cc964cb] Auto-update: rainfall & predictions @ 2026-02-19 08:46:42
+ 7 files changed, 199 insertions(+), 7 deletions(-)
+ create mode 100644 predictions/historicData/2026/02/map_2026-02-18.geojson
+ create mode 100644 predictions/historicData/2026/02/meta_2026-02-18.json
+ create mode 100644 predictions/historicData/2026/02/predictions_2026-02-18.parquet
+2026-02-19 08:46:48,348 | INFO | Locking support detected on remote "origin". Consider enabling it with:
+  $ git config lfs.https://github.com-buncombe/WonjunChoi1004/realtime-buncombe.git/info/lfs.locksverify true
+Uploading LFS objects: 100% (1/1), 101 KB | 0 B/s, done.
+To github.com-buncombe:WonjunChoi1004/realtime-buncombe.git
+   7a0463b..cc964cb  main -> main
+2026-02-19 08:46:48,349 | INFO | Push succeeded.
+▶️ Running daily auto-update job...
+2026-02-19 08:50:33,322 | INFO | Rainfall window: 2026-01-19 → 2026-02-17 (29 files, 1 missing → zero-filled).
+Sampling rainfall at 2,452 PRISM grid cells…
+Sampling static attributes at grid centers…
+Running models…
+/Users/wonjunchoi/PycharmProjects/realtime-buncombe/venv/lib/python3.9/site-packages/sklearn/utils/validation.py:2732: UserWarning: X has feature names, but RandomForestClassifier was fitted without feature names
+  warnings.warn(
+ok: wrote 2,452 rows for 2026-02-18 (rainfall through 2026-02-17)
+parquet: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/02/predictions_2026-02-18.parquet
+geojson: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/02/map_2026-02-18.geojson
+meta: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/02/meta_2026-02-18.json
+latest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.geojson, /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.json
+manifest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/index.json
+2026-02-19 08:50:33,326 | INFO | Committing and pushing changes
