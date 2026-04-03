@@ -1,6 +1,12 @@
 {
   "runs": [
     {
+      "date": "2026-04-02",
+      "geojson": "predictions/historicData/2026/04/map_2026-04-02.geojson",
+      "parquet": "predictions/historicData/2026/04/predictions_2026-04-02.parquet",
+      "meta": "predictions/historicData/2026/04/meta_2026-04-02.json"
+    },
+    {
       "date": "2026-04-01",
       "geojson": "predictions/historicData/2026/04/map_2026-04-01.geojson",
       "parquet": "predictions/historicData/2026/04/predictions_2026-04-01.parquet",
@@ -943,5 +949,5 @@
       "meta": "predictions/historicData/2025/09/meta_2025-09-19.json"
     }
   ],
-  "latest": "2026-04-01"
+  "latest": "2026-04-02"
 }
