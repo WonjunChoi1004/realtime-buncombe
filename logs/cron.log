@@ -19962,3 +19962,95 @@ meta: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicDa
 latest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.geojson, /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.json
 manifest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/index.json
 2026-05-22 14:34:19,910 | INFO | Committing and pushing changes
+2026-05-22 14:34:20,813 | INFO | [main 55bb860] Auto-update: rainfall & predictions @ 2026-05-22 14:34:20
+ 7 files changed, 159 insertions(+), 7 deletions(-)
+ create mode 100644 predictions/historicData/2026/05/map_2026-05-21.geojson
+ create mode 100644 predictions/historicData/2026/05/meta_2026-05-21.json
+ create mode 100644 predictions/historicData/2026/05/predictions_2026-05-21.parquet
+2026-05-22 14:34:25,269 | INFO | Locking support detected on remote "origin". Consider enabling it with:
+  $ git config lfs.https://github.com-buncombe/WonjunChoi1004/realtime-buncombe.git/info/lfs.locksverify true
+Uploading LFS objects: 100% (1/1), 118 KB | 0 B/s, done.
+To github.com-buncombe:WonjunChoi1004/realtime-buncombe.git
+   e035ef6..55bb860  main -> main
+2026-05-22 14:34:25,269 | INFO | Push succeeded.
+▶️ Running daily auto-update job...
+2026-05-23 05:00:01,288 | INFO | Internet connection detected. Proceeding with update.
+2026-05-23 05:00:01,289 | INFO | Running download_prism_daily.py
+2026-05-23 05:00:13,534 | INFO | /Users/wonjunchoi/PycharmProjects/realtime-buncombe/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+[SKIP] 2026-05-22 not found online.
+[OK  ] 2026-05-21 metadata matches remote
+[OK  ] 2026-05-21 expanded data present (prism_ppt_us_30s_20260521.tif)
+[OK  ] 2026-05-20 metadata matches remote
+[OK  ] 2026-05-20 expanded data present (prism_ppt_us_30s_20260520.tif)
+[OK  ] 2026-05-19 metadata matches remote
+[OK  ] 2026-05-19 expanded data present (prism_ppt_us_30s_20260519.tif)
+[OK  ] 2026-05-18 metadata matches remote
+[OK  ] 2026-05-18 expanded data present (prism_ppt_us_30s_20260518.tif)
+[OK  ] 2026-05-17 metadata matches remote
+[OK  ] 2026-05-17 expanded data present (prism_ppt_us_30s_20260517.tif)
+[OK  ] 2026-05-16 metadata matches remote
+[OK  ] 2026-05-16 expanded data present (prism_ppt_us_30s_20260516.tif)
+[OK  ] 2026-05-15 metadata matches remote
+[OK  ] 2026-05-15 expanded data present (prism_ppt_us_30s_20260515.tif)
+[OK  ] 2026-05-14 metadata matches remote
+[OK  ] 2026-05-14 expanded data present (prism_ppt_us_30s_20260514.tif)
+[OK  ] 2026-05-13 metadata matches remote
+[OK  ] 2026-05-13 expanded data present (prism_ppt_us_30s_20260513.tif)
+[OK  ] 2026-05-12 metadata matches remote
+[OK  ] 2026-05-12 expanded data present (prism_ppt_us_30s_20260512.tif)
+[OK  ] 2026-05-11 metadata matches remote
+[OK  ] 2026-05-11 expanded data present (prism_ppt_us_30s_20260511.tif)
+[OK  ] 2026-05-10 metadata matches remote
+[OK  ] 2026-05-10 expanded data present (prism_ppt_us_30s_20260510.tif)
+[OK  ] 2026-05-09 metadata matches remote
+[OK  ] 2026-05-09 expanded data present (prism_ppt_us_30s_20260509.tif)
+[OK  ] 2026-05-08 metadata matches remote
+[OK  ] 2026-05-08 expanded data present (prism_ppt_us_30s_20260508.tif)
+[OK  ] 2026-05-07 metadata matches remote
+[OK  ] 2026-05-07 expanded data present (prism_ppt_us_30s_20260507.tif)
+[OK  ] 2026-05-06 metadata matches remote
+[OK  ] 2026-05-06 expanded data present (prism_ppt_us_30s_20260506.tif)
+[OK  ] 2026-05-05 metadata matches remote
+[OK  ] 2026-05-05 expanded data present (prism_ppt_us_30s_20260505.tif)
+[OK  ] 2026-05-04 metadata matches remote
+[OK  ] 2026-05-04 expanded data present (prism_ppt_us_30s_20260504.tif)
+[OK  ] 2026-05-03 metadata matches remote
+[OK  ] 2026-05-03 expanded data present (prism_ppt_us_30s_20260503.tif)
+[OK  ] 2026-05-02 metadata matches remote
+[OK  ] 2026-05-02 expanded data present (prism_ppt_us_30s_20260502.tif)
+[OK  ] 2026-05-01 metadata matches remote
+[OK  ] 2026-05-01 expanded data present (prism_ppt_us_30s_20260501.tif)
+[OK  ] 2026-04-30 metadata matches remote
+[OK  ] 2026-04-30 expanded data present (prism_ppt_us_30s_20260430.tif)
+[OK  ] 2026-04-29 metadata matches remote
+[OK  ] 2026-04-29 expanded data present (prism_ppt_us_30s_20260429.tif)
+[OK  ] 2026-04-28 metadata matches remote
+[OK  ] 2026-04-28 expanded data present (prism_ppt_us_30s_20260428.tif)
+[OK  ] 2026-04-27 metadata matches remote
+[OK  ] 2026-04-27 expanded data present (prism_ppt_us_30s_20260427.tif)
+[OK  ] 2026-04-26 metadata matches remote
+[OK  ] 2026-04-26 expanded data present (prism_ppt_us_30s_20260426.tif)
+[OK  ] 2026-04-25 metadata matches remote
+[OK  ] 2026-04-25 expanded data present (prism_ppt_us_30s_20260425.tif)
+[OK  ] 2026-04-24 metadata matches remote
+[OK  ] 2026-04-24 expanded data present (prism_ppt_us_30s_20260424.tif)
+[OK  ] 2026-04-23 metadata matches remote
+[OK  ] 2026-04-23 expanded data present (prism_ppt_us_30s_20260423.tif)
+[INFO] Pruning files outside the past window...
+[PRUNE] Removed old folder → prism_ppt_us_30s_20260422
+[PRUNE] Removed old file → prism_ppt_us_30s_20260422.meta.json
+2026-05-23 05:00:13,535 | INFO | Running predict_daily_triple.py
+2026-05-23 05:24:24,492 | INFO | Rainfall window: 2026-04-22 → 2026-05-21 (29 files, 1 missing → zero-filled).
+Sampling rainfall at 2,452 PRISM grid cells…
+Sampling static attributes at grid centers…
+Running models…
+/Users/wonjunchoi/PycharmProjects/realtime-buncombe/venv/lib/python3.9/site-packages/sklearn/utils/validation.py:2732: UserWarning: X has feature names, but RandomForestClassifier was fitted without feature names
+  warnings.warn(
+ok: wrote 2,452 rows for 2026-05-22 (rainfall through 2026-05-21)
+parquet: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/05/predictions_2026-05-22.parquet
+geojson: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/05/map_2026-05-22.geojson
+meta: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/05/meta_2026-05-22.json
+latest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.geojson, /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.json
+manifest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/index.json
+2026-05-23 05:24:24,508 | INFO | Committing and pushing changes
