@@ -20054,3 +20054,101 @@ meta: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicDa
 latest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.geojson, /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.json
 manifest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/index.json
 2026-05-23 05:24:24,508 | INFO | Committing and pushing changes
+2026-05-23 05:24:25,469 | INFO | [main f791790] Auto-update: rainfall & predictions @ 2026-05-23 05:24:24
+ 7 files changed, 124 insertions(+), 6 deletions(-)
+ create mode 100644 predictions/historicData/2026/05/map_2026-05-22.geojson
+ create mode 100644 predictions/historicData/2026/05/meta_2026-05-22.json
+ create mode 100644 predictions/historicData/2026/05/predictions_2026-05-22.parquet
+2026-05-23 05:24:29,108 | INFO | Locking support detected on remote "origin". Consider enabling it with:
+  $ git config lfs.https://github.com-buncombe/WonjunChoi1004/realtime-buncombe.git/info/lfs.locksverify true
+To github.com-buncombe:WonjunChoi1004/realtime-buncombe.git
+   55bb860..f791790  main -> main
+2026-05-23 05:24:29,111 | INFO | Push succeeded.
+▶️ Running daily auto-update job...
+2026-05-24 14:58:06,257 | WARNING | No internet connection — delaying run. Retrying in 15 minutes...
+2026-05-24 15:07:53,530 | WARNING | No internet connection — delaying run. Retrying in 15 minutes...
+2026-05-25 00:50:44,368 | INFO | Internet connection detected. Proceeding with update.
+2026-05-25 00:50:44,370 | INFO | Running download_prism_daily.py
+2026-05-25 04:04:53,780 | INFO | /Users/wonjunchoi/PycharmProjects/realtime-buncombe/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+[SKIP] 2026-05-24 not found online.
+[ERR ] 2026-05-23 ('Connection aborted.', TimeoutError(60, 'Operation timed out'))
+[GET ] 2026-05-22 → https://data.prism.oregonstate.edu/time_series/us/an/800m/ppt/daily/2026/prism_ppt_us_30s_20260522.zip
+[DONE] Updated ZIP for 2026-05-22
+[MISS] 2026-05-22 missing expanded .tif — extracting now.
+[UNZIP] Extracted → /Users/wonjunchoi/PycharmProjects/realtime-buncombe/data/rain/prism_ppt_us_30s_20260522
+[CLEAN] 2026-05-22 removed ZIP after extraction.
+[OK  ] 2026-05-21 metadata matches remote
+[OK  ] 2026-05-21 expanded data present (prism_ppt_us_30s_20260521.tif)
+[ERR ] 2026-05-20 ('Connection aborted.', TimeoutError(60, 'Operation timed out'))
+[CLEAN] 2026-05-19 removed old expanded folder → prism_ppt_us_30s_20260519
+[GET ] 2026-05-19 → https://data.prism.oregonstate.edu/time_series/us/an/800m/ppt/daily/2026/prism_ppt_us_30s_20260519.zip
+[ERR ] 2026-05-19 ("Connection broken: ConnectionResetError(54, 'Connection reset by peer')", ConnectionResetError(54, 'Connection reset by peer'))
+[CLEAN] 2026-05-18 removed old expanded folder → prism_ppt_us_30s_20260518
+[GET ] 2026-05-18 → https://data.prism.oregonstate.edu/time_series/us/an/800m/ppt/daily/2026/prism_ppt_us_30s_20260518.zip
+[DONE] Updated ZIP for 2026-05-18
+[MISS] 2026-05-18 missing expanded .tif — extracting now.
+[UNZIP] Extracted → /Users/wonjunchoi/PycharmProjects/realtime-buncombe/data/rain/prism_ppt_us_30s_20260518
+[CLEAN] 2026-05-18 removed ZIP after extraction.
+[OK  ] 2026-05-17 metadata matches remote
+[OK  ] 2026-05-17 expanded data present (prism_ppt_us_30s_20260517.tif)
+[OK  ] 2026-05-16 metadata matches remote
+[OK  ] 2026-05-16 expanded data present (prism_ppt_us_30s_20260516.tif)
+[OK  ] 2026-05-15 metadata matches remote
+[OK  ] 2026-05-15 expanded data present (prism_ppt_us_30s_20260515.tif)
+[ERR ] 2026-05-14 ('Connection aborted.', TimeoutError(60, 'Operation timed out'))
+[OK  ] 2026-05-13 metadata matches remote
+[OK  ] 2026-05-13 expanded data present (prism_ppt_us_30s_20260513.tif)
+[OK  ] 2026-05-12 metadata matches remote
+[OK  ] 2026-05-12 expanded data present (prism_ppt_us_30s_20260512.tif)
+[ERR ] 2026-05-11 ('Connection aborted.', TimeoutError(60, 'Operation timed out'))
+[OK  ] 2026-05-10 metadata matches remote
+[OK  ] 2026-05-10 expanded data present (prism_ppt_us_30s_20260510.tif)
+[OK  ] 2026-05-09 metadata matches remote
+[OK  ] 2026-05-09 expanded data present (prism_ppt_us_30s_20260509.tif)
+[OK  ] 2026-05-08 metadata matches remote
+[OK  ] 2026-05-08 expanded data present (prism_ppt_us_30s_20260508.tif)
+[OK  ] 2026-05-07 metadata matches remote
+[OK  ] 2026-05-07 expanded data present (prism_ppt_us_30s_20260507.tif)
+[OK  ] 2026-05-06 metadata matches remote
+[OK  ] 2026-05-06 expanded data present (prism_ppt_us_30s_20260506.tif)
+[ERR ] 2026-05-05 ('Connection aborted.', TimeoutError(60, 'Operation timed out'))
+[OK  ] 2026-05-04 metadata matches remote
+[OK  ] 2026-05-04 expanded data present (prism_ppt_us_30s_20260504.tif)
+[OK  ] 2026-05-03 metadata matches remote
+[OK  ] 2026-05-03 expanded data present (prism_ppt_us_30s_20260503.tif)
+[OK  ] 2026-05-02 metadata matches remote
+[OK  ] 2026-05-02 expanded data present (prism_ppt_us_30s_20260502.tif)
+[OK  ] 2026-05-01 metadata matches remote
+[OK  ] 2026-05-01 expanded data present (prism_ppt_us_30s_20260501.tif)
+[OK  ] 2026-04-30 metadata matches remote
+[OK  ] 2026-04-30 expanded data present (prism_ppt_us_30s_20260430.tif)
+[OK  ] 2026-04-29 metadata matches remote
+[OK  ] 2026-04-29 expanded data present (prism_ppt_us_30s_20260429.tif)
+[OK  ] 2026-04-28 metadata matches remote
+[OK  ] 2026-04-28 expanded data present (prism_ppt_us_30s_20260428.tif)
+[OK  ] 2026-04-27 metadata matches remote
+[OK  ] 2026-04-27 expanded data present (prism_ppt_us_30s_20260427.tif)
+[OK  ] 2026-04-26 metadata matches remote
+[OK  ] 2026-04-26 expanded data present (prism_ppt_us_30s_20260426.tif)
+[OK  ] 2026-04-25 metadata matches remote
+[OK  ] 2026-04-25 expanded data present (prism_ppt_us_30s_20260425.tif)
+[INFO] Pruning files outside the past window...
+[PRUNE] Removed old folder → prism_ppt_us_30s_20260423
+[PRUNE] Removed old folder → prism_ppt_us_30s_20260424
+[PRUNE] Removed old file → prism_ppt_us_30s_20260424.meta.json
+[PRUNE] Removed old file → prism_ppt_us_30s_20260423.meta.json
+2026-05-25 04:04:53,780 | INFO | Running predict_daily_triple.py
+2026-05-26 03:18:38,605 | INFO | Rainfall window: 2026-04-23 → 2026-05-22 (27 files, 3 missing → zero-filled).
+Sampling rainfall at 2,452 PRISM grid cells…
+Sampling static attributes at grid centers…
+Running models…
+/Users/wonjunchoi/PycharmProjects/realtime-buncombe/venv/lib/python3.9/site-packages/sklearn/utils/validation.py:2732: UserWarning: X has feature names, but RandomForestClassifier was fitted without feature names
+  warnings.warn(
+ok: wrote 2,452 rows for 2026-05-24 (rainfall through 2026-05-22)
+parquet: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/05/predictions_2026-05-24.parquet
+geojson: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/05/map_2026-05-24.geojson
+meta: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/historicData/2026/05/meta_2026-05-24.json
+latest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.geojson, /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/latest.json
+manifest: /Users/wonjunchoi/PycharmProjects/realtime-buncombe/predictions/index.json
+2026-05-26 03:18:38,609 | INFO | Committing and pushing changes

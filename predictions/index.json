@@ -1,6 +1,12 @@
 {
   "runs": [
     {
+      "date": "2026-05-24",
+      "geojson": "predictions/historicData/2026/05/map_2026-05-24.geojson",
+      "parquet": "predictions/historicData/2026/05/predictions_2026-05-24.parquet",
+      "meta": "predictions/historicData/2026/05/meta_2026-05-24.json"
+    },
+    {
       "date": "2026-05-22",
       "geojson": "predictions/historicData/2026/05/map_2026-05-22.geojson",
       "parquet": "predictions/historicData/2026/05/predictions_2026-05-22.parquet",
@@ -1171,5 +1177,5 @@
       "meta": "predictions/historicData/2025/09/meta_2025-09-19.json"
     }
   ],
-  "latest": "2026-05-22"
+  "latest": "2026-05-24"
 }
