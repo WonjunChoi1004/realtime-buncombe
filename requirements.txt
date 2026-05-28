@@ -1,5 +1,6 @@
 pandas
 geopandas
+rasterio
 shapely
 pyyaml
 scikit-learn
