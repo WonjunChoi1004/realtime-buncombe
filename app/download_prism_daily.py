@@ -4,6 +4,7 @@ import datetime as dt
 import json, sys, time, shutil, zipfile, re
 from email.utils import parsedate_to_datetime
 from pathlib import Path
+PROJECT_ROOT = next((p for p in Path(__file__).resolve().parents if (p / ".project-root").exists()), Path(__file__).resolve().parent)
 
 import requests
 import yaml
@@ -191,7 +192,7 @@ def cleanup_old_data(cfg, keep_dates: set):
 
 def main():
     # 🔹 Default config path changed here (now points to project root)
-    cfg_path = Path("/Users/wonjunchoi/PycharmProjects/realtime-buncombe/config.yaml")
+    cfg_path = PROJECT_ROOT / "config.yaml"
     cfg = load_config(cfg_path)
 
     today = dt.date.today()

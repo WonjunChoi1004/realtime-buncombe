@@ -2,7 +2,7 @@
 import os, datetime, subprocess, sys
 from pathlib import Path
 
-REPO = Path("/Users/wonjunchoi/PycharmProjects/realtime-buncombe")
+REPO = next((p for p in Path(__file__).resolve().parents if (p / ".project-root").exists()), Path(__file__).resolve().parents[1])
 LOG_DIR = REPO / "logs"
 LAST_RUN = LOG_DIR / "last_run.txt"
 PYTHON = REPO / "venv/bin/python"
