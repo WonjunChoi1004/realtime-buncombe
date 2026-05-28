@@ -1,0 +1,58 @@
+name: Daily rainfall + predictions
+
+# Runs the same job your Mac's cron used to run, but on GitHub's servers.
+# Downloads PRISM rainfall, runs the models, and commits the results back to
+# this repo. Render then redeploys the site automatically (it watches `main`).
+
+on:
+  schedule:
+    # GitHub cron is in UTC. 10:00 UTC ≈ 5 AM US Eastern (6 AM during DST).
+    - cron: "0 10 * * *"
+  workflow_dispatch: {}      # lets you run it manually from the Actions tab
+
+# Allow the job to push commits back to the repo using the built-in token.
+permissions:
+  contents: write
+
+# Never let two daily runs overlap.
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo (with Git LFS files)
+        uses: actions/checkout@v4
+        with:
+          lfs: true            # pulls the .parquet / .joblib model + grid files
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"   # matches the version your venv used
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Download PRISM rainfall
+        run: python app/download_prism_daily.py
+
+      - name: Generate predictions
+        run: python app/predict_daily_triple.py
+
+      - name: Commit and push results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Auto-update: rainfall & predictions ($(date -u +%Y-%m-%dT%H:%MZ))"
+            git push
+          fi
