@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-15",
+  "rainfall_through": "2026-10-15",
+  "rows": 2452,
+  "chunks": 1,
+  "outputs": {
+    "parquet": "predictions/historicData/2026/10/predictions_2026-10-15.parquet",
+    "geojson": "predictions/historicData/2026/10/map_2026-10-15.geojson",
+    "meta": "predictions/historicData/2026/10/meta_2026-10-15.json"
+  },
+  "models": [
+    "logistic",
+    "rf",
+    "xgb"
+  ]
+}
